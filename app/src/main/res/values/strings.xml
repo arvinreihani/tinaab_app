@@ -26,4 +26,5 @@
     <string name="hobby">عادت فردی:</string>
     <string name="disease_records">سوابق بیماری:</string>
     <string name="accept">ثبت</string>
+    <string name="reinter_newpass">رمزعبور جدید را دوباره وارد کنید</string>
 </resources>

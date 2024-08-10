@@ -10,7 +10,7 @@
         android:id="@+id/back"
         android:layout_width="63dp"
         android:layout_height="61dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
         android:text="Button"
         app:icon="@drawable/_114883"
@@ -25,6 +25,7 @@
         android:layout_marginTop="4dp"
         android:ems="10"
         android:inputType="text"
+        android:textColorLink="#040202"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/back"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -48,6 +49,7 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:inputType="text"
+        android:textColorLink="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextNumber"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -60,6 +62,7 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:inputType="text"
+        android:textColorLink="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextNumber3"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -105,6 +108,7 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:inputType="number"
+        android:textColorLink="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextText2"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -124,10 +128,11 @@
         android:id="@+id/editTextText6"
         android:layout_width="250dp"
         android:layout_height="55dp"
-        android:layout_marginStart="28dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="25dp"
         android:ems="10"
         android:inputType="text"
+        android:textColorLink="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextText5"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -175,6 +180,7 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:inputType="number"
+        android:textColorLink="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextNumber2"
         tools:ignore="SpeakableTextPresentCheck" />
@@ -198,6 +204,7 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:inputType="text"
+        android:textColorLink="#000000"
         app:layout_constraintEnd_toStartOf="@+id/textView5"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -212,6 +219,7 @@
         android:layout_marginTop="25dp"
         android:ems="10"
         android:inputType="number"
+        android:textColorLink="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextText3"
         tools:ignore="SpeakableTextPresentCheck" />

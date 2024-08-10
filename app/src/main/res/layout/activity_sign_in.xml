@@ -10,26 +10,26 @@
         android:id="@+id/etNewUsername"
         android:layout_width="350dp"
         android:layout_height="60dp"
-        android:layout_marginTop="292dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="296dp"
         android:hint="@string/newusername"
         android:inputType="text"
         android:textAlignment="viewEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/etNewPassword"
+        android:textColorLink="#000000"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/etNewPassword"
         android:layout_width="350dp"
         android:layout_height="60dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="12dp"
         android:hint="@string/newpass"
         android:inputType="textPassword"
         android:textAlignment="viewEnd"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.21"
-        app:layout_constraintStart_toStartOf="@+id/btnCreateAccount"
+        android:textColorLink="#000000"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNewUsername" />
 
     <Button
@@ -53,5 +53,19 @@
         app:icon="@drawable/_114883"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/etNewPassword2"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:hint="@string/reinter_newpass"
+        android:inputType="textPassword"
+        android:textAlignment="viewEnd"
+        android:textColorLink="#000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etNewPassword" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

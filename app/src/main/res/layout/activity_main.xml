@@ -41,6 +41,7 @@
         android:inputType="text"
         android:textAlignment="viewEnd"
         android:textColorHint="#737171"
+        android:textColorLink="#0D0707"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -55,6 +56,7 @@
         android:inputType="textPassword"
         android:textAlignment="viewEnd"
         android:textColorHint="#737171"
+        android:textColorLink="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etUsername" />

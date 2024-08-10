@@ -19,6 +19,7 @@ public class SignInActivity extends AppCompatActivity {
         // Find views by ID
         EditText etNewUsername = findViewById(R.id.etNewUsername);
         EditText etNewPassword = findViewById(R.id.etNewPassword);
+        EditText etNewPassword2 = findViewById(R.id.etNewPassword2);
         Button btnCreateAccount = findViewById(R.id.btnCreateAccount);
         Button btnback = findViewById(R.id.back);
 
@@ -29,17 +30,20 @@ public class SignInActivity extends AppCompatActivity {
                 // Get input from EditTexts
                 String newUsername = etNewUsername.getText().toString();
                 String newPassword = etNewPassword.getText().toString();
+                String newPassword2 = etNewPassword2.getText().toString();
 
-                // Add the new user to the credentials map (this should be done through secure storage in a real app)
-                MainActivity.credentials.put(newUsername, newPassword);
+                if (newPassword == newPassword2) {// Add the new user to the credentials map (this should be done through secure storage in a real app)
+                    MainActivity.credentials.put(newUsername, newPassword);
+                    Toast.makeText(SignInActivity.this, "اکاانت با موفقیت ساخته شد", Toast.LENGTH_SHORT).show();
+                    // Navigate back to the login activity
+                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish(); // Close the sign-in activity
 
-                // Show a success message
-                Toast.makeText(SignInActivity.this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(SignInActivity.this, "رمز عبور متابقت ندارد", Toast.LENGTH_SHORT).show();
+                }
 
-                // Navigate back to the login activity
-                Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish(); // Close the sign-in activity
             }
         });
         btnback.setOnClickListener(new View.OnClickListener() {
