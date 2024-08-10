@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FBFBFB"
     tools:context="MainActivity">
 
     <Button
@@ -50,7 +49,7 @@
         android:id="@+id/etPassword"
         android:layout_width="240dp"
         android:layout_height="50dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
@@ -74,33 +73,21 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="355dp"
-        android:layout_height="215dp"
+        android:layout_width="412dp"
+        android:layout_height="268dp"
         android:layout_marginStart="28dp"
         android:layout_marginTop="44dp"
         android:layout_marginEnd="28dp"
-        android:background="@color/ic_launcher_background"
-        android:src="@drawable/sleep_hygiene_hub"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/sleep_hygiene_hub"
-        tools:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="86dp"
-        android:layout_height="84dp"
-        android:layout_marginTop="28dp"
-        android:src="@drawable/login_user_name_1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:srcCompat="@drawable/sleep_hygiene_hub_removebg_preview" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="168dp"
         android:layout_height="42dp"
+        android:layout_marginTop="55dp"
         android:lineSpacingExtra="14sp"
         android:text="@string/login_user"
         android:textAlignment="center"
@@ -109,6 +96,6 @@
         android:typeface="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

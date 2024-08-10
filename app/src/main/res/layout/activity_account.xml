@@ -15,7 +15,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/sleep_illustrations_01" />
+        app:srcCompat="@drawable/sleep_illustrations_01_removebg_preview" />
 
     <Button
         android:id="@+id/setting"

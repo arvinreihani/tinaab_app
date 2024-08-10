@@ -32,7 +32,7 @@ public class SignInActivity extends AppCompatActivity {
                 String newPassword = etNewPassword.getText().toString();
                 String newPassword2 = etNewPassword2.getText().toString();
 
-                if (newPassword == newPassword2) {// Add the new user to the credentials map (this should be done through secure storage in a real app)
+                if (newPassword.equals(newPassword2)) {// Add the new user to the credentials map (this should be done through secure storage in a real app)
                     MainActivity.credentials.put(newUsername, newPassword);
                     Toast.makeText(SignInActivity.this, "اکاانت با موفقیت ساخته شد", Toast.LENGTH_SHORT).show();
                     // Navigate back to the login activity
