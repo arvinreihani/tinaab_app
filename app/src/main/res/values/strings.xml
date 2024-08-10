@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">version0.1</string>
+    <string name="signin">ثبت نام</string>
+    <string name="login">ورود</string>
+    <string name="text_account">کاربر جدید هستی؟</string>
+    <string name="login_user">ورود کاربر</string>
+    <string name="password">رمز عبور</string>
+    <string name="username">نام کاربری</string>
+    <string name="setting">تنظیمات</string>
+    <string name="panel">پنل کاربری</string>
+    <string name="mygadget">گجت من</string>
+    <string name="mysituation">وضعیت من</string>
+    <string name="analysis">آنالیز</string>
+    <string name="feedback">باز خورد</string>
+    <string name="goal">هدف گذاری</string>
+    <string name="newusername">نام کاربری جدید</string>
+    <string name="newpass">رمز عبور جدید</string>
+    <string name="createaccount">ساخت حساب کاربری</string>
+    <string name="fullname">نام و نام</string>
+    <string name="sex">جنسیت:</string>
+    <string name="location">محل سکونت:</string>
+    <string name="age">سن:</string>
+    <string name="job">شغل:</string>
+    <string name="height">قد:</string>
+    <string name="weight">وزن:</string>
+    <string name="hobby">عادت فردی:</string>
+    <string name="disease_records">سوابق بیماری:</string>
+    <string name="accept">ثبت</string>
+</resources>
