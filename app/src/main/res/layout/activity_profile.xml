@@ -120,7 +120,7 @@
         android:layout_marginTop="80dp"
         android:text="@string/fullname"
         android:textAlignment="viewStart"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -205,10 +205,8 @@
         android:ems="10"
         android:inputType="text"
         android:textColorLink="#000000"
-        app:layout_constraintEnd_toStartOf="@+id/textView5"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkBox"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerOptions"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <EditText
@@ -224,28 +222,14 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextText3"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <CheckBox
-        android:id="@+id/checkBox"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
-        android:layout_height="55dp"
-        android:layout_marginTop="25dp"
-        android:text="مرد"
-        app:layout_constraintEnd_toStartOf="@+id/textView4"
-        app:layout_constraintStart_toEndOf="@+id/checkBox2"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
-
-    <CheckBox
-        android:id="@+id/checkBox2"
-        android:layout_width="48dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="20dp"
-        android:text="زن"
-        app:layout_constraintEnd_toStartOf="@+id/checkBox"
-        app:layout_constraintHorizontal_bias="0.54"
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextText" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextText">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/button"
@@ -258,5 +242,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextText6" />
+
+    <Spinner
+        android:id="@+id/spinnerOptions"
+        android:layout_width="250dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextText"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,7 +11,7 @@
         android:layout_width="350dp"
         android:layout_height="60dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="296dp"
+        android:layout_marginTop="160dp"
         android:hint="@string/newusername"
         android:inputType="text"
         android:textAlignment="viewEnd"
@@ -24,24 +24,24 @@
         android:layout_width="350dp"
         android:layout_height="60dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:hint="@string/newpass"
         android:inputType="textPassword"
         android:textAlignment="viewEnd"
         android:textColorLink="#000000"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etNewUsername" />
+        app:layout_constraintTop_toBottomOf="@+id/etNewPhone" />
 
     <Button
         android:id="@+id/btnCreateAccount"
         android:layout_width="379dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="324dp"
+        android:layout_marginTop="220dp"
         android:baselineAligned="false"
         android:text="@string/createaccount"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etNewPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/etNewPassword2" />
 
     <Button
         android:id="@+id/back"
@@ -59,7 +59,7 @@
         android:layout_width="350dp"
         android:layout_height="60dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/reinter_newpass"
         android:inputType="textPassword"
@@ -67,5 +67,31 @@
         android:textColorLink="#000000"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNewPassword" />
+
+    <EditText
+        android:id="@+id/etNewEmail"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="@string/Email"
+        android:inputType="textEmailAddress"
+        android:textAlignment="viewEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etNewUsername" />
+
+    <EditText
+        android:id="@+id/etNewPhone"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="@string/phone_num"
+        android:inputType="phone"
+        android:textAlignment="viewEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etNewEmail" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,14 +6,15 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public interface ApiService {
     @FormUrlEncoded
     @POST("add_user.php")
-    Call<ApiResponse> addUser(
-            @Field("username") String username,
-            @Field("password") String password
-    );
+    Call<ApiResponse> addUser(@Field("username") String username,
+                              @Field("Email") String Email,
+                              @Field("phone") String phone,
+                              @Field("password") String password);
 
     @FormUrlEncoded
     @POST("check_user.php")
@@ -23,5 +24,18 @@ public interface ApiService {
     );
     @GET("test_connection") // ایجاد یک endpoint برای تست اتصال
     Call<ResponseBody> testConnection();
+
+    @POST("submitProfile.php")
+    Call<ApiResponse> submitProfile(
+            @Field("username") String username,
+            @Field("fullname") String fullname,
+            @Field("height") String height,
+            @Field("weight") String weight,
+            @Field("location") String location,
+            @Field("job") String job,
+            @Field("diseaseRecords") String diseaseRecords,
+            @Field("hobby") String hobby,
+            @Field("gender") String gender
+    );
 
 }

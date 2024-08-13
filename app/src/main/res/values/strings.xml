@@ -16,7 +16,7 @@
     <string name="newusername">نام کاربری جدید</string>
     <string name="newpass">رمز عبور جدید</string>
     <string name="createaccount">ساخت حساب کاربری</string>
-    <string name="fullname">نام و نام خانوادگی</string>
+    <string name="fullname">نام و نام خانوادگی:</string>
     <string name="sex">جنسیت:</string>
     <string name="location">محل سکونت:</string>
     <string name="age">سن:</string>
@@ -27,4 +27,6 @@
     <string name="disease_records">سوابق بیماری:</string>
     <string name="accept">ثبت</string>
     <string name="reinter_newpass">رمزعبور جدید را دوباره وارد کنید</string>
+    <string name="phone_num">شماره همراه</string>
+    <string name="Email">ایمیل</string>
 </resources>
