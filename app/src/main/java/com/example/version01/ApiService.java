@@ -36,6 +36,10 @@ public interface ApiService {
             @Field("diseaseRecords") String diseaseRecords,
             @Field("hobby") String hobby,
             @Field("gender") String gender
-    );
 
+
+    );
+    @FormUrlEncoded
+    @GET("get_user_data.php")
+    Call<UserResponse> getUserData(@Query("username") String username);
 }
