@@ -31,7 +31,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,6 +45,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private ApiService apiService;
+    private static final int REQUEST_CODE = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        // بررسی و درخواست مجوزها
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE);
+        }
     }
 
     private void loginUser(String username, String password) {
@@ -106,5 +122,16 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "خطا در اتصال به سرور: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // مجوزها به درستی اعطا شدند
+            } else {
+                // مجوزها رد شدند
+            }
+        }
     }
 }

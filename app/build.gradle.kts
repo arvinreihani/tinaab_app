@@ -32,16 +32,19 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.activity)
+    implementation(libs.activity) // Make sure to use activity-ktx
     implementation(libs.constraintlayout)
     implementation(libs.retrofit)
     implementation(libs.gsonConverter)
+    implementation(libs.loggingInterceptor)
+    implementation(libs.fragment) // Add dependency for fragment-ktx
+//    implementation(libs.achartengine) // Add this line for AChartEngine
+//    implementation(libs.anychart) // Add this line for AnyChart
+//    implementation(libs.mpandroidchart) // Make sure MPAndroidChart is added here
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-//    implementation(libs.loggingInterceptor)
-
 }

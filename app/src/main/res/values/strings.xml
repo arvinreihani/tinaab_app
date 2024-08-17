@@ -29,4 +29,5 @@
     <string name="reinter_newpass">رمزعبور جدید را دوباره وارد کنید</string>
     <string name="phone_num">شماره همراه</string>
     <string name="Email">ایمیل</string>
+    <string name="record">ضبط</string>
 </resources>

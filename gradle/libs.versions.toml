@@ -10,6 +10,10 @@ constraintlayout = "2.1.4"
 retrofit = "2.10.0"
 gsonConverter = "2.10.0"
 loggingInterceptor = "5.0.0-alpha.3"
+fragment = "1.5.7"
+achartengine = "1.2.0"
+anychart = "1.1.2"
+mpandroidchart = "v3.2.0"
 
 
 [libraries]
@@ -18,13 +22,16 @@ ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitV
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 gsonConverter = { module = "com.squareup.retrofit2:converter-gson", version.ref = "gsonConverter" }
 loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
+fragment = { module = "androidx.fragment:fragment-ktx", version.ref = "fragment" }
+achartengine = { module = "org.achartengine:achartengine", version.ref = "achartengine" }
+anychart = { module = "com.anychart:anychart-android", version.ref = "anychart" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-
