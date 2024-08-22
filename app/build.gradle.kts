@@ -25,6 +25,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -34,15 +35,16 @@ android {
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.activity) // Make sure to use activity-ktx
+    implementation(libs.activity) // Ensure activity-ktx is included
     implementation(libs.constraintlayout)
     implementation(libs.retrofit)
     implementation(libs.gsonConverter)
     implementation(libs.loggingInterceptor)
-    implementation(libs.fragment) // Add dependency for fragment-ktx
-//    implementation(libs.achartengine) // Add this line for AChartEngine
-//    implementation(libs.anychart) // Add this line for AnyChart
-//    implementation(libs.mpandroidchart) // Make sure MPAndroidChart is added here
+    implementation(libs.fragment) // Ensure fragment-ktx is included
+    // Uncomment and use if needed
+//     implementation(libs.achartengine) // Add this line for AChartEngine
+//     implementation(libs.anychart) // Add this line for AnyChart
+//    implementation(libs.mpandroidchart) // Ensure MPAndroidChart is added here
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

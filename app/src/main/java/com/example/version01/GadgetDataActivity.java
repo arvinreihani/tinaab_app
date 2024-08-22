@@ -4,13 +4,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+
 
 public class GadgetDataActivity extends AppCompatActivity {
 
@@ -27,10 +28,6 @@ public class GadgetDataActivity extends AppCompatActivity {
 
         backButton = findViewById(R.id.back);
 
-        // اضافه کردن ویو سفارشی برای رسم نمودار
-        CustomChartView customChartView = new CustomChartView(this);
-        setContentView(customChartView);
-
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,7 +39,7 @@ public class GadgetDataActivity extends AppCompatActivity {
     }
 
     // کلاس داخلی برای رسم نمودار
-    private class CustomChartView extends View {
+    public static class CustomChartView extends View {
         private Paint linePaint;
         private float[] dataPoints;
 
@@ -53,6 +50,11 @@ public class GadgetDataActivity extends AppCompatActivity {
 
         public CustomChartView(Context context, AttributeSet attrs) {
             super(context, attrs);
+            init();
+        }
+
+        public CustomChartView(Context context, AttributeSet attrs, int defStyleAttr) {
+            super(context, attrs, defStyleAttr);
             init();
         }
 

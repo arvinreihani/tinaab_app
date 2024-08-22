@@ -10,12 +10,12 @@
         android:id="@+id/etNewUsername"
         android:layout_width="350dp"
         android:layout_height="60dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="160dp"
         android:hint="@string/newusername"
         android:inputType="text"
         android:textAlignment="viewEnd"
         android:textColorLink="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/etNewEmail"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,12 +23,12 @@
         android:id="@+id/etNewPassword"
         android:layout_width="350dp"
         android:layout_height="60dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
         android:hint="@string/newpass"
         android:inputType="textPassword"
         android:textAlignment="viewEnd"
         android:textColorLink="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/etNewPassword2"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNewPhone" />
 
@@ -36,9 +36,9 @@
         android:id="@+id/btnCreateAccount"
         android:layout_width="379dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="220dp"
         android:baselineAligned="false"
         android:text="@string/createaccount"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNewPassword2" />
@@ -47,10 +47,11 @@
         android:id="@+id/back"
         android:layout_width="63dp"
         android:layout_height="61dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:text="Button"
         app:icon="@drawable/_114883"
+        app:layout_constraintBottom_toTopOf="@+id/etNewUsername"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,13 +59,13 @@
         android:id="@+id/etNewPassword2"
         android:layout_width="350dp"
         android:layout_height="60dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/reinter_newpass"
         android:inputType="textPassword"
         android:textAlignment="viewEnd"
         android:textColorLink="#000000"
+        app:layout_constraintBottom_toTopOf="@+id/btnCreateAccount"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNewPassword" />
 
@@ -72,12 +73,12 @@
         android:id="@+id/etNewEmail"
         android:layout_width="350dp"
         android:layout_height="60dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/Email"
         android:inputType="textEmailAddress"
         android:textAlignment="viewEnd"
+        app:layout_constraintBottom_toTopOf="@+id/etNewPhone"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNewUsername" />
 
@@ -85,12 +86,12 @@
         android:id="@+id/etNewPhone"
         android:layout_width="350dp"
         android:layout_height="60dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/phone_num"
         android:inputType="phone"
         android:textAlignment="viewEnd"
+        app:layout_constraintBottom_toTopOf="@+id/etNewPassword"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etNewEmail" />
 
