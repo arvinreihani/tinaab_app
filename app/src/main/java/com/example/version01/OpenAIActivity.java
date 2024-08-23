@@ -113,6 +113,7 @@ public class OpenAIActivity extends AppCompatActivity {
             public void onFailure(Call<UserResponse> call, Throwable t) {
                 Log.e("API_ERROR", "Failure: " + t.getMessage());
                 Toast.makeText(OpenAIActivity.this, "Failure: " + t.getMessage()+ "please try again", Toast.LENGTH_SHORT).show();
+                fetchUserData(username); // دریافت داده‌های کاربر و ارسال پرامپت به سرور PHP
             }
         });
     }
@@ -144,6 +145,7 @@ public class OpenAIActivity extends AppCompatActivity {
             public void onFailure(Call<UserResponse> call, Throwable t) {
                 Log.e("API_ERROR", "Failure: " + t.getMessage());
                 Toast.makeText(OpenAIActivity.this, "Failure: " + t.getMessage()+ "please try again", Toast.LENGTH_SHORT).show();
+                fetchUserData(username); // دریافت داده‌های کاربر و ارسال پرامپت به سرور PHP
             }
         });
     }
@@ -168,21 +170,24 @@ public class OpenAIActivity extends AppCompatActivity {
             public void onFailure(Call<ServerResponse> call, Throwable t) {
                 Log.e("API_ERROR", "Failure: " + t.getMessage());
                 Toast.makeText(OpenAIActivity.this, "Failure: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Intent intent = getIntent();
+                String username = intent.getStringExtra("username");
+                fetchUserData(username); // دریافت داده‌های کاربر و ارسال پرامپت به سرور PHP
             }
         });
     }
 
     private String createPromptFromUserData(UserResponse userResponse) {
         // ایجاد پرامپت از داده‌های کاربر
-         return "من یک پزشک متخصص بیماری های داخلی هستم و نیاز مند به عملکردی ایده ال در بررسی و مدیریت بیماری با شرایط زیر هستم لطفا تمام توصیه های ضروری برای ارائه به بیمار را همراه با جزییات کامل برای هر مشکل بیمار به صورت مجزا ارایه بده و توضیحاتی برای هر مورد را به تفصیل به بیمار توضیح بده" + "\n" +
-                 "Fullname: " + userResponse.getFullname() + "\n" +
-                 "Height: " + userResponse.getHeight() + "\n" +
-                 "Weight: " + userResponse.getWeight() + "\n" +
-                 "Age: " + userResponse.getAge() + "\n" +
-                 "Location: " + userResponse.getLocation() + "\n" +
-                 "Job: " + userResponse.getJob() + "\n" +
-                 "Disease Records: " + userResponse.getDiseaseRecords() + "\n" +
-                 "Hobby: " + userResponse.getHobby();
+        return "من یک پزشک متخصص بیماری های داخلی هستم و نیاز مند به عملکردی ایده ال در بررسی و مدیریت بیماری با شرایط زیر هستم لطفا تمام توصیه های ضروری برای ارائه به بیمار را همراه با جزییات کامل برای هر مشکل بیمار به صورت مجزا ارایه بده و توضیحاتی برای هر مورد را به تفصیل به بیمار توضیح بده" + "\n" +
+                "Fullname: " + userResponse.getFullname() + "\n" +
+                "Height: " + userResponse.getHeight() + "\n" +
+                "Weight: " + userResponse.getWeight() + "\n" +
+                "Age: " + userResponse.getAge() + "\n" +
+                "Location: " + userResponse.getLocation() + "\n" +
+                "Job: " + userResponse.getJob() + "\n" +
+                "Disease Records: " + userResponse.getDiseaseRecords() + "\n" +
+                "Hobby: " + userResponse.getHobby();
     }
     private String createPromptFromUserData1(UserResponse userResponse) {
         EditText AskEditText = findViewById(R.id.prompt);

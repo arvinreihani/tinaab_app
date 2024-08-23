@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
@@ -23,6 +24,7 @@ public class NextActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 100;
     private Button btnRecord;
     private boolean isRecording = false;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,6 @@ public class NextActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
-        String StringBuilder  = intent.getStringExtra(null);
         Button btnprofile = findViewById(R.id.panel);
         Button btnanalysis = findViewById(R.id.analysis);
         Button btngadget = findViewById(R.id.gadget);
@@ -75,7 +76,6 @@ public class NextActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(NextActivity.this, OpenAIActivity.class);
                 intent.putExtra("username", username);
-                intent.putExtra("StringBuilder", StringBuilder);
                 startActivity(intent);
             }
         });
@@ -125,16 +125,42 @@ public class NextActivity extends AppCompatActivity {
 
     private void startRecordingService() {
         Intent serviceIntent = new Intent(this, AudioRecordingService.class);
+        // در Activity
+        Intent intent = getIntent();
+        String username = intent.getStringExtra("username");
+        serviceIntent.putExtra("username", username); // ارسال داده
+        startService(serviceIntent);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
+            Toast.makeText(NextActivity.this, "Recording Started", Toast.LENGTH_LONG).show();
+            btnRecord.setText("Stop Recording");
+            isRecording = true;
+
         } else {
             startService(serviceIntent);
         }
+        countDownTimer = new CountDownTimer(60000,1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // اگر نیازی به انجام کاری در هر تیک ندارید، اینجا را خالی بگذارید.
+            }
+
+            @Override
+            public void onFinish() {
+                // فراخوانی تابع myFunction بعد از 1 دقیقه
+                stopRecordingService();
+            }
+        }.start();
     }
+
 
     private void stopRecordingService() {
         Intent serviceIntent = new Intent(this, AudioRecordingService.class);
         stopService(serviceIntent);
+        Toast.makeText(NextActivity.this, "Recording Stopped", Toast.LENGTH_LONG).show();
+        btnRecord.setText("Start Recording");
+        isRecording = false;
     }
 
     private boolean hasRequiredPermissions() {
