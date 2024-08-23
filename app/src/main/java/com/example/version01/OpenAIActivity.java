@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,13 +27,17 @@ import com.google.gson.annotations.SerializedName;
 public class OpenAIActivity extends AppCompatActivity {
     private ApiService apiService;
     private TextView textView12;
-    private Button analysisButton;
+    private Button sendButton;
     private Button backButton;
+    private StringBuilder textBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_openai);
+
+        textBuilder = new StringBuilder();
+
 
         // مقداردهی ApiService
         Retrofit retrofit = new Retrofit.Builder()
@@ -43,18 +48,22 @@ public class OpenAIActivity extends AppCompatActivity {
         apiService = retrofit.create(ApiService.class);
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
+        String StringBuilder  = intent.getStringExtra("StringBuilder");
         Log.d("API", "Received username: " + username);
+        Log.d("API", "Received StringBuilder : " + StringBuilder);
+
+        fetchUserData(username); // دریافت داده‌های کاربر و ارسال پرامپت به سرور PHP
 
         // مقداردهی به عناصر رابط کاربری
         textView12 = findViewById(R.id.textView12);
-        analysisButton = findViewById(R.id.analysis);
+        sendButton = findViewById(R.id.send);
         backButton = findViewById(R.id.back);
 
         // تنظیم لیسنر برای دکمه "تحلیل"
-        analysisButton.setOnClickListener(new View.OnClickListener() {
+        sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchUserData(username); // دریافت داده‌های کاربر و ارسال پرامپت به سرور PHP
+                fetchUserData1(username); // دریافت داده‌های کاربر و ارسال پرامپت به سرور PHP
             }
         });
 
@@ -66,6 +75,14 @@ public class OpenAIActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void addText(String text) {
+        textBuilder.append(text);
+    }
+
+    public String getText() {
+        return textBuilder.toString();
     }
 
     private void fetchUserData(String username) {
@@ -95,11 +112,41 @@ public class OpenAIActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
                 Log.e("API_ERROR", "Failure: " + t.getMessage());
-                Toast.makeText(OpenAIActivity.this, "Failure: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(OpenAIActivity.this, "Failure: " + t.getMessage()+ "please try again", Toast.LENGTH_SHORT).show();
             }
         });
     }
+    private void fetchUserData1(String username) {
+        Call<UserResponse> call = apiService.getUserData(username);
+        call.enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UserResponse userResponse = response.body();
+                    Log.d("API", "User data fetched successfully");
 
+                    if ("success".equals(userResponse.getStatus())) {
+                        String prompt = createPromptFromUserData1(userResponse);
+                        Log.d("API", prompt);
+
+                        sendPromptToServer(prompt);
+                    } else {
+                        String message = userResponse.getMessage();
+                        Toast.makeText(OpenAIActivity.this, message, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Log.e("API_ERROR", "Error in response: " + response.message());
+                    Toast.makeText(OpenAIActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+                Log.e("API_ERROR", "Failure: " + t.getMessage());
+                Toast.makeText(OpenAIActivity.this, "Failure: " + t.getMessage()+ "please try again", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     private void sendPromptToServer(String prompt) {
         Call<ServerResponse> call = apiService.sendPromptToServer(prompt);
         call.enqueue(new Callback<ServerResponse>() {
@@ -108,8 +155,9 @@ public class OpenAIActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     ServerResponse serverResponse = response.body();
                     Log.d("API", "Server response received successfully"+serverResponse.getResponseText());
-
-                    textView12.setText(serverResponse.getResponseText());
+                    String response1 = serverResponse.getResponseText();
+                    textView12.setText(response1);
+                    addText(response1);
                 } else {
                     Log.e("API_ERROR", "Error in server response: " + response.message());
                     Toast.makeText(OpenAIActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
@@ -126,15 +174,22 @@ public class OpenAIActivity extends AppCompatActivity {
 
     private String createPromptFromUserData(UserResponse userResponse) {
         // ایجاد پرامپت از داده‌های کاربر
-        return "خیلی کوتاه درمورد اطلاعاتی که از خودم میدم توضیح بده و بهم بگو BMI ام چنده و یک توصیه خیلی کوتاه پزشکی بهم بکن" + "\n" +
-                "Fullname: " + userResponse.getFullname() + "\n" +
-                "Height: " + userResponse.getHeight() + "\n" +
-                "Weight: " + userResponse.getWeight() + "\n" +
-                "Age: " + userResponse.getAge() + "\n" +
-                "Location: " + userResponse.getLocation() + "\n" +
-                "Job: " + userResponse.getJob() + "\n" +
-                "Disease Records: " + userResponse.getDiseaseRecords() + "\n" +
-                "Hobby: " + userResponse.getHobby();
+         return "من یک پزشک متخصص بیماری های داخلی هستم و نیاز مند به عملکردی ایده ال در بررسی و مدیریت بیماری با شرایط زیر هستم لطفا تمام توصیه های ضروری برای ارائه به بیمار را همراه با جزییات کامل برای هر مشکل بیمار به صورت مجزا ارایه بده و توضیحاتی برای هر مورد را به تفصیل به بیمار توضیح بده" + "\n" +
+                 "Fullname: " + userResponse.getFullname() + "\n" +
+                 "Height: " + userResponse.getHeight() + "\n" +
+                 "Weight: " + userResponse.getWeight() + "\n" +
+                 "Age: " + userResponse.getAge() + "\n" +
+                 "Location: " + userResponse.getLocation() + "\n" +
+                 "Job: " + userResponse.getJob() + "\n" +
+                 "Disease Records: " + userResponse.getDiseaseRecords() + "\n" +
+                 "Hobby: " + userResponse.getHobby();
+    }
+    private String createPromptFromUserData1(UserResponse userResponse) {
+        EditText AskEditText = findViewById(R.id.prompt);
+        String Ask = AskEditText.getText().toString();
+        addText(Ask);
+        // ایجاد پرامپت از داده‌های کاربر
+        return getText();
     }
 
     public class UserResponse {

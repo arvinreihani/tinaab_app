@@ -35,6 +35,7 @@ public class NextActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
+        String StringBuilder  = intent.getStringExtra(null);
         Button btnprofile = findViewById(R.id.panel);
         Button btnanalysis = findViewById(R.id.analysis);
         Button btngadget = findViewById(R.id.gadget);
@@ -74,6 +75,7 @@ public class NextActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(NextActivity.this, OpenAIActivity.class);
                 intent.putExtra("username", username);
+                intent.putExtra("StringBuilder", StringBuilder);
                 startActivity(intent);
             }
         });
