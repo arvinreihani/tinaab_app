@@ -37,47 +37,34 @@ public class NextActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String username = intent.getStringExtra("username");
+
         Button btnprofile = findViewById(R.id.panel);
         Button btnanalysis = findViewById(R.id.analysis);
         Button btngadget = findViewById(R.id.gadget);
         Button btnsetting = findViewById(R.id.setting);
 
-        Log.e("API_ERROR", "Code: " + ", Message: " + username);
-
-        btnprofile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(NextActivity.this, ProfileActivity.class);
-                intent.putExtra("username", username);
-                startActivity(intent);
-            }
+        btnprofile.setOnClickListener(v -> {
+            Intent profileIntent = new Intent(NextActivity.this, ProfileActivity.class);
+            profileIntent.putExtra("username", username);
+            startActivity(profileIntent);
         });
 
-        btngadget.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(NextActivity.this, GadgetDataActivity.class);
-                intent.putExtra("username", username);
-                startActivity(intent);
-            }
+        btngadget.setOnClickListener(v -> {
+            Intent gadgetIntent = new Intent(NextActivity.this, GadgetDataActivity.class);
+            gadgetIntent.putExtra("username", username);
+            startActivity(gadgetIntent);
         });
 
-        btnsetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(NextActivity.this, SettingActivity.class);
-                intent.putExtra("username", username);
-                startActivity(intent);
-            }
+        btnsetting.setOnClickListener(v -> {
+            Intent settingIntent = new Intent(NextActivity.this, SettingActivity.class);
+            settingIntent.putExtra("username", username);
+            startActivity(settingIntent);
         });
 
-        btnanalysis.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(NextActivity.this, OpenAIActivity.class);
-                intent.putExtra("username", username);
-                startActivity(intent);
-            }
+        btnanalysis.setOnClickListener(v -> {
+            Intent analysisIntent = new Intent(NextActivity.this, OpenAIActivity.class);
+            analysisIntent.putExtra("username", username);
+            startActivity(analysisIntent);
         });
 
         btnRecord = findViewById(R.id.btnRecord);
@@ -86,25 +73,18 @@ public class NextActivity extends AppCompatActivity {
             requestForPermissions();
         }
 
-        btnRecord.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (hasRequiredPermissions()) {
-                    if (isRecording) {
-                        stopRecordingService();
-                        Toast.makeText(NextActivity.this, "Recording Stopped", Toast.LENGTH_LONG).show();
-                        btnRecord.setText("Start Recording");
-                        isRecording = false;
-                    } else {
-                        startRecordingService();
-                        Toast.makeText(NextActivity.this, "Recording Started", Toast.LENGTH_LONG).show();
-                        btnRecord.setText("Stop Recording");
-                        isRecording = true;
-                    }
+        btnRecord.setOnClickListener(v -> {
+            if (hasRequiredPermissions()) {
+                if (isRecording) {
+                    Toast.makeText(NextActivity.this, "در حال ضبط", Toast.LENGTH_LONG).show();
                 } else {
-                    Log.e("NextActivity", "Permissions are not granted.");
-                    requestForPermissions();
+                    startRecordingService(username);
+                    Toast.makeText(NextActivity.this, "شروع ضبط", Toast.LENGTH_LONG).show();
+                    isRecording = true;
                 }
+            } else {
+                Log.e("NextActivity", "Permissions are not granted.");
+                requestForPermissions();
             }
         });
     }
@@ -123,43 +103,35 @@ public class NextActivity extends AppCompatActivity {
         }
     }
 
-    private void startRecordingService() {
+    private void startRecordingService(String username) {
         Intent serviceIntent = new Intent(this, AudioRecordingService.class);
-        // در Activity
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
-        serviceIntent.putExtra("username", username); // ارسال داده
-        startService(serviceIntent);
+        serviceIntent.putExtra("username", username); // ارسال داده به سرویس
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);
-            Toast.makeText(NextActivity.this, "Recording Started", Toast.LENGTH_LONG).show();
-            btnRecord.setText("Stop Recording");
-            isRecording = true;
-
         } else {
             startService(serviceIntent);
         }
-        countDownTimer = new CountDownTimer(60000,1000) {
+
+        isRecording = true;
+
+        countDownTimer = new CountDownTimer(20000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                // اگر نیازی به انجام کاری در هر تیک ندارید، اینجا را خالی بگذارید.
+                // هر ثانیه تایمر می‌تواند عملکرد خاصی انجام دهد
             }
 
             @Override
             public void onFinish() {
-                // فراخوانی تابع myFunction بعد از 1 دقیقه
                 stopRecordingService();
             }
         }.start();
     }
 
-
     private void stopRecordingService() {
         Intent serviceIntent = new Intent(this, AudioRecordingService.class);
         stopService(serviceIntent);
-        Toast.makeText(NextActivity.this, "Recording Stopped", Toast.LENGTH_LONG).show();
-        btnRecord.setText("Start Recording");
+        Toast.makeText(NextActivity.this, "ضبط متوقف شد", Toast.LENGTH_LONG).show();
         isRecording = false;
     }
 
@@ -199,20 +171,18 @@ public class NextActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0) {
-                boolean allPermissionsGranted = true;
-                for (int result : grantResults) {
-                    if (result != PackageManager.PERMISSION_GRANTED) {
-                        allPermissionsGranted = false;
-                        break;
-                    }
+            boolean allPermissionsGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allPermissionsGranted = false;
+                    break;
                 }
+            }
 
-                if (allPermissionsGranted) {
-                    Toast.makeText(NextActivity.this, "Permissions Granted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(NextActivity.this, "Permissions Denied", Toast.LENGTH_SHORT).show();
-                }
+            if (allPermissionsGranted) {
+                Toast.makeText(NextActivity.this, "Permissions Granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(NextActivity.this, "Permissions Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -220,13 +190,11 @@ public class NextActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (Environment.isExternalStorageManager()) {
-                    Log.d("NextActivity", "Manage External Storage Permissions Granted");
-                } else {
-                    Toast.makeText(NextActivity.this, "Storage Permissions Denied", Toast.LENGTH_SHORT).show();
-                }
+        if (requestCode == PERMISSION_REQUEST_CODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                Log.d("NextActivity", "Manage External Storage Permissions Granted");
+            } else {
+                Toast.makeText(NextActivity.this, "Storage Permissions Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }

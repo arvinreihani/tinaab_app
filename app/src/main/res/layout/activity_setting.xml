@@ -10,11 +10,86 @@
         android:id="@+id/back"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
         android:text="Button"
         app:icon="@drawable/_114883"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.00999999" />
+
+    <TextView
+        android:id="@+id/fullname"
+        android:layout_width="150dp"
+        android:layout_height="30dp"
+        android:textAlignment="viewEnd"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/support"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edit"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ویرایش"
+        app:layout_constraintBottom_toTopOf="@+id/support"
+        app:layout_constraintEnd_toStartOf="@+id/fullname"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/support"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:text="پشتیبانی"
+        app:layout_constraintBottom_toTopOf="@+id/about"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit" />
+
+    <Button
+        android:id="@+id/about"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:text="درباره تیناب"
+        app:layout_constraintBottom_toTopOf="@+id/details"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/support" />
+
+    <Button
+        android:id="@+id/details"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:text="مشخصات نرم افزار"
+        app:layout_constraintBottom_toTopOf="@+id/rules"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/about" />
+
+    <Button
+        android:id="@+id/rules"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:text="قوانین"
+        app:layout_constraintBottom_toTopOf="@+id/singout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/details" />
+
+    <Button
+        android:id="@+id/singout"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:backgroundTint="#900000"
+        android:text="خروج از حساب کاربری"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rules" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
