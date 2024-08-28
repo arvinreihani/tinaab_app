@@ -1,21 +1,30 @@
 package com.example.version01;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.Button;
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import java.util.ArrayList;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 
 public class GadgetDataActivity extends AppCompatActivity {
 
     private Button backButton;
+    private LineChart lineChart1;
+    private LineChart lineChart2;
+    private PieChart pieChart;  // تعریف نمودار دایره‌ای
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +36,13 @@ public class GadgetDataActivity extends AppCompatActivity {
         Log.e("API_ERROR", "Username: " + username);
 
         backButton = findViewById(R.id.back);
+        lineChart1 = findViewById(R.id.lineChart);
+        lineChart2 = findViewById(R.id.lineChart1);
+        pieChart = findViewById(R.id.pieChart);  // مقداردهی نمودار دایره‌ای
+
+        setupChart(lineChart1, new float[]{100, 200, 150, 300, 250, 400, 30, 20, 50, 200, 300, 250, 400, 30, 20, 250, 400, 30, 20, 50, 200, 300, 250, 400, 30, 20}, "Dataset 1");
+        setupChart(lineChart2, new float[]{50, 150, 200, 250, 300, 350}, "Dataset 2");
+        setupPieChart(pieChart, new float[]{30, 20, 50, 200}, "Dataset 3");  // تنظیم نمودار دایره‌ای
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -38,50 +54,50 @@ public class GadgetDataActivity extends AppCompatActivity {
         });
     }
 
-    // کلاس داخلی برای رسم نمودار
-    public static class CustomChartView extends View {
-        private Paint linePaint;
-        private float[] dataPoints;
-
-        public CustomChartView(Context context) {
-            super(context);
-            init();
+    // روش تنظیم نمودار خطی (LineChart)
+    private void setupChart(LineChart chart, float[] dataPoints, String label) {
+        ArrayList<Entry> entries = new ArrayList<>();
+        for (int i = 0; i < dataPoints.length; i++) {
+            entries.add(new Entry(i, dataPoints[i]));
         }
 
-        public CustomChartView(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            init();
+        LineDataSet dataSet = new LineDataSet(entries, label);
+        dataSet.setColor(getResources().getColor(R.color.purple_500));
+        dataSet.setValueTextColor(getResources().getColor(R.color.black));
+
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+
+        // تنظیمات محور x
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setGranularityEnabled(true);
+
+        // تنظیمات محور y
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setAxisMinimum(0f);
+        YAxis rightAxis = chart.getAxisRight();
+        rightAxis.setEnabled(false);
+
+        chart.invalidate(); // برای به‌روزرسانی نمودار
+    }
+
+    // روش تنظیم نمودار دایره‌ای (PieChart)
+    private void setupPieChart(PieChart chart, float[] dataPoints, String label) {
+        ArrayList<PieEntry> entries = new ArrayList<>();
+        for (float data : dataPoints) {
+            entries.add(new PieEntry(data));
         }
 
-        public CustomChartView(Context context, AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
-            init();
-        }
+        PieDataSet dataSet = new PieDataSet(entries, label);
+        dataSet.setColors(getResources().getColor(R.color.purple_500),
+                getResources().getColor(R.color.brown),
+                getResources().getColor(R.color.white),
+                getResources().getColor(R.color.teal_200)); // تنظیم رنگ‌ها
 
-        private void init() {
-            linePaint = new Paint();
-            linePaint.setColor(Color.BLUE);
-            linePaint.setStrokeWidth(5);
-            dataPoints = new float[]{100, 200, 150, 300, 250, 400}; // داده‌های نمونه
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-
-            if (dataPoints.length < 2) return;
-
-            float startX = 50;
-            float startY = dataPoints[0];
-            for (int i = 1; i < dataPoints.length; i++) {
-                float stopX = startX + 100;
-                float stopY = dataPoints[i];
-
-                canvas.drawLine(startX, startY, stopX, stopY, linePaint);
-
-                startX = stopX;
-                startY = stopY;
-            }
-        }
+        PieData pieData = new PieData(dataSet);
+        chart.setData(pieData);
+        chart.invalidate(); // برای به‌روزرسانی نمودار
     }
 }

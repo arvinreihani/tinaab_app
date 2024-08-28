@@ -12,8 +12,8 @@ gsonConverter = "2.10.0"
 loggingInterceptor = "5.0.0-alpha.3"
 fragment = "1.5.7"
 achartengine = "1.2.0"
-anychart = "1.1.2"
-mpandroidchart = "v3.2.0"
+anychart = "1.1.4"
+mpandroidchart = "v3.1.0"
 
 
 [libraries]

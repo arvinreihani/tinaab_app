@@ -33,7 +33,6 @@
         android:id="@+id/etUsername"
         android:layout_width="240dp"
         android:layout_height="50dp"
-        android:backgroundTint="#000000"
         android:ems="10"
         android:hint="@string/username"
         android:inputType="text"

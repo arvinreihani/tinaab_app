@@ -2,16 +2,21 @@ package com.example.version01;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,49 +30,80 @@ public class NextActivity extends AppCompatActivity {
     private Button btnRecord;
     private boolean isRecording = false;
     private CountDownTimer countDownTimer;
+    private TextView jsonTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
-        // شروع سرویس سوکت
-        Intent socketServiceIntent = new Intent(this, MySocketService.class);
-        startService(socketServiceIntent);
-
-        Intent intent = getIntent();
-        String username = intent.getStringExtra("username");
-
+        // تنظیمات اولیه
+        jsonTextView = findViewById(R.id.textView21); // مطمئن شوید که ID صحیح است
         Button btnprofile = findViewById(R.id.panel);
         Button btnanalysis = findViewById(R.id.analysis);
         Button btngadget = findViewById(R.id.gadget);
         Button btnsetting = findViewById(R.id.setting);
+        Button btnsituation = findViewById(R.id.situation);
+        btnRecord = findViewById(R.id.btnRecord);
 
+        // شروع سرویس سوکت
+        Intent socketServiceIntent = new Intent(this, MySocketService.class);
+        startService(socketServiceIntent);
+
+        // تعریف Handler برای دریافت پیام‌ها
+        Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == 1) {
+                    String message = (String) msg.obj;
+                    Log.d("TAG", "Message received from socket: " + message);
+                    // نمایش پیام در TextView
+                    if (jsonTextView != null) {
+                        jsonTextView.setText(message);
+                    } else {
+                        Log.e("NextActivity", "TextView is null");
+                    }
+                }
+            }
+        };
+        // تنظیم Handler به سرویس
+        MySocketService.setHandler(handler);
+
+        // تنظیم دکمه‌ها
         btnprofile.setOnClickListener(v -> {
+            String username = getIntent().getStringExtra("username");
             Intent profileIntent = new Intent(NextActivity.this, ProfileActivity.class);
             profileIntent.putExtra("username", username);
             startActivity(profileIntent);
         });
 
         btngadget.setOnClickListener(v -> {
+            String username = getIntent().getStringExtra("username");
             Intent gadgetIntent = new Intent(NextActivity.this, GadgetDataActivity.class);
             gadgetIntent.putExtra("username", username);
             startActivity(gadgetIntent);
         });
 
         btnsetting.setOnClickListener(v -> {
+            String username = getIntent().getStringExtra("username");
             Intent settingIntent = new Intent(NextActivity.this, SettingActivity.class);
             settingIntent.putExtra("username", username);
             startActivity(settingIntent);
         });
 
         btnanalysis.setOnClickListener(v -> {
+            String username = getIntent().getStringExtra("username");
             Intent analysisIntent = new Intent(NextActivity.this, OpenAIActivity.class);
             analysisIntent.putExtra("username", username);
             startActivity(analysisIntent);
         });
 
-        btnRecord = findViewById(R.id.btnRecord);
+        btnsituation.setOnClickListener(v -> {
+            String username = getIntent().getStringExtra("username");
+            Intent situationIntent = new Intent(NextActivity.this, MySituationActivity.class);
+            situationIntent.putExtra("username", username);
+            startActivity(situationIntent);
+        });
 
         if (!hasRequiredPermissions()) {
             requestForPermissions();
@@ -78,7 +114,7 @@ public class NextActivity extends AppCompatActivity {
                 if (isRecording) {
                     Toast.makeText(NextActivity.this, "در حال ضبط", Toast.LENGTH_LONG).show();
                 } else {
-                    startRecordingService(username);
+                    startRecordingService(getIntent().getStringExtra("username"));
                     Toast.makeText(NextActivity.this, "شروع ضبط", Toast.LENGTH_LONG).show();
                     isRecording = true;
                 }
@@ -87,6 +123,18 @@ public class NextActivity extends AppCompatActivity {
                 requestForPermissions();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // هیچ کد اضافی در اینجا نیاز نیست
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // هیچ کد اضافی در اینجا نیاز نیست
     }
 
     @Override
@@ -105,7 +153,7 @@ public class NextActivity extends AppCompatActivity {
 
     private void startRecordingService(String username) {
         Intent serviceIntent = new Intent(this, AudioRecordingService.class);
-        serviceIntent.putExtra("username", username); // ارسال داده به سرویس
+        serviceIntent.putExtra("username", username);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(serviceIntent);

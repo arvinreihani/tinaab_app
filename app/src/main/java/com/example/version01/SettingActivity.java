@@ -90,8 +90,38 @@ public class SettingActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
-
-
+        btndetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingActivity.this, AboutActivity.class);
+                intent.putExtra("username", username); // ارسال userId به Activity جدید
+                startActivity(intent);
+            }
+        });
+        btnsupport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingActivity.this, SupportActivity.class);
+                intent.putExtra("username", username); // ارسال userId به Activity جدید
+                startActivity(intent);
+            }
+        });
+        btnrules.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingActivity.this, RulesActivity.class);
+                intent.putExtra("username", username); // ارسال userId به Activity جدید
+                startActivity(intent);
+            }
+        });
+        btnabout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingActivity.this, AboutTinabActivity.class);
+                intent.putExtra("username", username); // ارسال userId به Activity جدید
+                startActivity(intent);
+            }
+        });
     }
     private void fetchUserData(String username) {
         Call<ProfileActivity.UserResponse> call = apiService.getUserData(username);

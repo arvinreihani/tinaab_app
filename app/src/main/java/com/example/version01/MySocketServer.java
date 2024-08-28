@@ -1,11 +1,14 @@
 package com.example.version01;
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 import java.net.ServerSocket;
-import android.util.Log;
+import java.net.Socket;
 
 public class MySocketServer {
 
@@ -14,11 +17,16 @@ public class MySocketServer {
     private Socket clientSocket;
     private PrintWriter output;
     private BufferedReader input;
+    private Handler handler; // Handler برای ارسال پیام‌ها به Activity
+
+    public MySocketServer(Handler handler) {
+        this.handler = handler;
+    }
 
     public void startServer(int port) {
         try {
             serverSocket = new ServerSocket(port);
-            Log.e(TAG, "Server started on port: " + port);
+            Log.d(TAG, "Server started on port: " + port);
 
             clientSocket = serverSocket.accept();
             Log.d(TAG, "Client connected: " + clientSocket.getInetAddress().getHostAddress());
@@ -29,6 +37,10 @@ public class MySocketServer {
             String messageFromClient;
             while ((messageFromClient = input.readLine()) != null) {
                 Log.d(TAG, "Message from client: " + messageFromClient);
+
+                // ارسال پیام به Handler
+                Message msg = handler.obtainMessage(1, messageFromClient);
+                handler.sendMessage(msg);
 
                 output.println("Received: " + messageFromClient);
             }
