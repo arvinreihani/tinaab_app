@@ -63,7 +63,7 @@ public class GadgetDataActivity extends AppCompatActivity {
 
         LineDataSet dataSet = new LineDataSet(entries, label);
         dataSet.setColor(getResources().getColor(R.color.purple_500));
-        dataSet.setValueTextColor(getResources().getColor(R.color.black));
+        dataSet.setValueTextColor(getResources().getColor(R.color.white));
 
         LineData lineData = new LineData(dataSet);
         chart.setData(lineData);
@@ -92,8 +92,8 @@ public class GadgetDataActivity extends AppCompatActivity {
 
         PieDataSet dataSet = new PieDataSet(entries, label);
         dataSet.setColors(getResources().getColor(R.color.purple_500),
-                getResources().getColor(R.color.brown),
-                getResources().getColor(R.color.white),
+                getResources().getColor(R.color.pink),
+                getResources().getColor(R.color.green),
                 getResources().getColor(R.color.teal_200)); // تنظیم رنگ‌ها
 
         PieData pieData = new PieData(dataSet);

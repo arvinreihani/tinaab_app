@@ -6,5 +6,12 @@
     <color name="back">@color/ic_launcher_background</color> <!-- رنگ بنفش -->
     <color name="teal_200">#03DAC5</color>
     <color name="brown">#642B00</color>
+    <color name="grey">#6F6F6F</color>
+    <color name="light_blue">#0090DE</color>
+    <color name="dark_blue">#002F7E</color>
+    <color name="green">#169500</color>
+    <color name="red">#FA0000</color>
+    <color name="pink">#F22295</color>
+    <color name="yellow">#FFEB3B</color>
 
 </resources>
