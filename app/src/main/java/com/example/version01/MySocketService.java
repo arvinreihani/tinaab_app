@@ -12,14 +12,16 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.util.Log;
-
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import androidx.core.app.NotificationCompat;
 
 public class MySocketService extends Service {
 
     private static final String CHANNEL_ID = "ServerChannel";
     private static final String TAG = "MySocketService";
-    private MySocketServer mySocketServer;
+    private MyUdpServer myUdpServer;  // تغییر از MySocketServer به MyUdpServer
     private PowerManager.WakeLock wakeLock;
     private static Handler handler; // Handler برای ارسال پیام‌ها به Activity
 
@@ -43,7 +45,7 @@ public class MySocketService extends Service {
             }
         };
 
-        mySocketServer = new MySocketServer(serviceHandler);
+        myUdpServer = new MyUdpServer(serviceHandler);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Log.d(TAG, "Creating notification channel for foreground service.");
@@ -59,7 +61,7 @@ public class MySocketService extends Service {
             }
 
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("Socket Server")
+                    .setContentTitle("UDP Server")
                     .setContentText("Server is running...")
                     .setSmallIcon(R.drawable.ic_launcher_foreground)
                     .build();
@@ -78,8 +80,8 @@ public class MySocketService extends Service {
         }
 
         new Thread(() -> {
-            Log.d(TAG, "Starting socket server on port 8080."); // تغییر پورت به 8081
-            mySocketServer.startServer(8080);
+            Log.d(TAG, "Starting UDP server on port 65000.");
+            myUdpServer.startServer(65000); // تغییر پورت به 65000
         }).start();
     }
 
@@ -88,9 +90,9 @@ public class MySocketService extends Service {
         super.onDestroy();
         Log.d(TAG, "Service is being destroyed.");
 
-        if (mySocketServer != null) {
-            mySocketServer.stopServer();
-            Log.d(TAG, "Socket server stopped.");
+        if (myUdpServer != null) {
+            myUdpServer.stopServer();
+            Log.d(TAG, "UDP server stopped.");
         }
 
         if (wakeLock != null && wakeLock.isHeld()) {

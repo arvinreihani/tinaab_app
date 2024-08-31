@@ -18,11 +18,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import org.json.JSONObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NextActivity extends AppCompatActivity {
 
@@ -31,6 +39,9 @@ public class NextActivity extends AppCompatActivity {
     private boolean isRecording = false;
     private CountDownTimer countDownTimer;
     private TextView jsonTextView;
+    private Timer timer;
+    private String receivedMessage;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +49,13 @@ public class NextActivity extends AppCompatActivity {
         setContentView(R.layout.activity_account);
 
         // تنظیمات اولیه
-        jsonTextView = findViewById(R.id.textView21); // مطمئن شوید که ID صحیح است
         Button btnprofile = findViewById(R.id.panel);
         Button btnanalysis = findViewById(R.id.analysis);
         Button btngadget = findViewById(R.id.gadget);
         Button btnsetting = findViewById(R.id.setting);
         Button btnsituation = findViewById(R.id.situation);
         btnRecord = findViewById(R.id.btnRecord);
+
 
         // شروع سرویس سوکت
         Intent socketServiceIntent = new Intent(this, MySocketService.class);
@@ -55,17 +66,16 @@ public class NextActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 1) {
-                    String message = (String) msg.obj;
-                    Log.d("TAG", "Message received from socket: " + message);
+                    receivedMessage = (String) msg.obj;
+                    Log.d("TAG", "Message received from socket: " + receivedMessage);
                     // نمایش پیام در TextView
-                    if (jsonTextView != null) {
-                        jsonTextView.setText(message);
                     } else {
                         Log.e("NextActivity", "TextView is null");
                     }
                 }
-            }
         };
+
+
         // تنظیم Handler به سرویس
         MySocketService.setHandler(handler);
 
@@ -123,11 +133,38 @@ public class NextActivity extends AppCompatActivity {
                 requestForPermissions();
             }
         });
+
+        // شروع ارسال پیام‌ها
+        startSendingMessages();
+    }
+
+    private void startSendingMessages() {
+        timer = new Timer();
+
+        // تعریف TimerTask برای ارسال پیام هر 2 ثانیه
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                // اجرای عملیات شبکه در یک Thread جداگانه
+                new Thread(() -> sendMessageToGadget(createJsonMessage())).start();
+            }
+        };
+
+        // شروع TimerTask با تأخیر 0 و تکرار هر 2 ثانیه
+        timer.scheduleAtFixedRate(sendTask, 0, 3000);
+    }
+
+    private void stopSendingMessages() {
+        if (timer != null) {
+            timer.cancel(); // توقف TimerTask
+            timer = null;
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         // هیچ کد اضافی در اینجا نیاز نیست
     }
 
@@ -149,6 +186,9 @@ public class NextActivity extends AppCompatActivity {
         if (isRecording) {
             stopRecordingService();
         }
+
+        // متوقف کردن ارسال پیام‌ها
+        stopSendingMessages();
     }
 
     private void startRecordingService(String username) {
@@ -246,4 +286,193 @@ public class NextActivity extends AppCompatActivity {
             }
         }
     }
+
+    private String createJsonMessage() {
+        try {
+            GadgetData gadgetData = new GadgetData(receivedMessage);
+
+            // دسترسی به مقادیر از شیء
+            String temp = gadgetData.getTemp();
+            String fpr = gadgetData.getHRT();
+            String pr = gadgetData.getFHRT();
+            String fsp = gadgetData.getFSPO();
+            String spo = gadgetData.getSPO();
+
+            Log.d("MainActivity", "Temperature: " + temp);
+            Log.d("MainActivity", "FHRT: " + fpr);
+            // ایجاد شیء JSON با مقادیر خاص
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("Cl", "test");
+            jsonObject.put("Temp", temp);
+            jsonObject.put("PR", pr);
+            jsonObject.put("SPO", spo);
+            jsonObject.put("M", "4");
+            jsonObject.put("c", "yes");
+            jsonObject.put("v", "0");
+
+            return jsonObject.toString();
+        } catch (Exception e) {
+            Log.e("TAG", "Error creating JSON message", e);
+            return "{}"; // بازگرداندن پیام JSON خالی در صورت بروز خطا
+        }
+    }
+    public void processJsonMessage(String jsonString) {
+        try {
+            // تجزیه پیام JSON به یک شیء JSONObject
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            // استخراج مقادیر کلیدهای مختلف
+            String FHRT = jsonObject.getString("FHRT");
+            String FSPO = jsonObject.getString("FSPO");
+            String FTemp = jsonObject.getString("FTemp");
+            String HRT = jsonObject.getString("HRT");
+            String SPO = jsonObject.getString("SPO");
+            String Temp = jsonObject.getString("Temp");
+            String x = jsonObject.getString("x");
+            String y = jsonObject.getString("y");
+            String z = jsonObject.getString("z");
+            String k1 = jsonObject.getString("k1");
+            String k2 = jsonObject.getString("k2");
+//
+//            // نمایش مقادیر یا انجام عملیات دیگر
+//            Log.d("JsonParser", "FHRT: " + FHRT);
+//            Log.d("JsonParser", "FSPO: " + FSPO);
+//            Log.d("JsonParser", "FTemp: " + FTemp);
+//            Log.d("JsonParser", "HRT: " + HRT);
+//            Log.d("JsonParser", "SPO: " + SPO);
+//            Log.d("JsonParser", "Temp: " + Temp);
+//            Log.d("JsonParser", "x: " + x);
+//            Log.d("JsonParser", "y: " + y);
+//            Log.d("JsonParser", "z: " + z);
+//            Log.d("JsonParser", "k1: " + k1);
+//            Log.d("JsonParser", "k2: " + k2);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("JsonParser", "Error parsing JSON: " + e.getMessage());
+        }
+    }
+
+    public void sendMessageToGadget(String message) {
+        try {
+            // آدرس IP و پورت گجت
+            InetAddress gadgetAddress = InetAddress.getByName("192.168.101.18");
+            int gadgetPort = 5050;
+
+            // ایجاد Socket برای ارسال پیام
+            DatagramSocket socket = new DatagramSocket();
+
+            // تبدیل پیام به آرایه بایت
+            byte[] messageBytes = message.getBytes();
+
+            // ایجاد Packet برای ارسال
+            DatagramPacket packet = new DatagramPacket(messageBytes, messageBytes.length, gadgetAddress, gadgetPort);
+
+            // ارسال Packet
+            socket.send(packet);
+
+            // بستن Socket بعد از ارسال پیام
+            socket.close();
+
+            Log.d("TAG", "Message sent to gadget: " + message);
+
+        } catch (Exception e) {
+            Log.e("TAG", "Error sending message to gadget", e);
+        }
+    }
+    public class GadgetData {
+
+        // متغیرها برای ذخیره مقادیر JSON
+        private String FHRT;
+        private String FSPO;
+        private String FTemp;
+        private String HRT;
+        private String SPO;
+        private String Temp;
+        private String x;
+        private String y;
+        private String z;
+        private String k1;
+        private String k2;
+
+        // سازنده بدون پارامتر
+        public GadgetData() {
+        }
+
+        // سازنده با پارامتر که JSON را به شیء تبدیل می‌کند
+        public GadgetData(String jsonString) {
+            parseJson(jsonString);
+        }
+
+        // متد برای پارس کردن JSON و پر کردن مقادیر
+        private void parseJson(String jsonString) {
+            try {
+                JSONObject jsonObject = new JSONObject(jsonString);
+
+                // پر کردن مقادیر از JSON
+                this.FHRT = jsonObject.optString("FHRT");
+                this.FSPO = jsonObject.optString("FSPO");
+                this.FTemp = jsonObject.optString("FTemp");
+                this.HRT = jsonObject.optString("HRT");
+                this.SPO = jsonObject.optString("SPO");
+                this.Temp = jsonObject.optString("Temp");
+                this.x = jsonObject.optString("x");
+                this.y = jsonObject.optString("y");
+                this.z = jsonObject.optString("z");
+                this.k1 = jsonObject.optString("k1");
+                this.k2 = jsonObject.optString("k2");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Getterها برای دسترسی به مقادیر
+        public String getFHRT() {
+            return FHRT;
+        }
+
+        public String getFSPO() {
+            return FSPO;
+        }
+
+        public String getFTemp() {
+            return FTemp;
+        }
+
+        public String getHRT() {
+            return HRT;
+        }
+
+        public String getSPO() {
+            return SPO;
+        }
+
+        public String getTemp() {
+            return Temp;
+        }
+
+        public String getX() {
+            return x;
+        }
+
+        public String getY() {
+            return y;
+        }
+
+        public String getZ() {
+            return z;
+        }
+
+        public String getK1() {
+            return k1;
+        }
+
+        public String getK2() {
+            return k2;
+        }
+    }
+
 }
+
+
