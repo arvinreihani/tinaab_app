@@ -2,7 +2,6 @@ package com.example.version01;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -14,7 +13,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +26,7 @@ import androidx.core.content.ContextCompat;
 import org.json.JSONObject;
 
 import org.json.JSONException;
-import org.json.JSONObject;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -60,6 +58,9 @@ public class NextActivity extends AppCompatActivity {
         // شروع سرویس سوکت
         Intent socketServiceIntent = new Intent(this, MySocketService.class);
         startService(socketServiceIntent);
+
+        Intent serviceIntent = new Intent(this, GadgetCommunicationService.class);
+        startService(serviceIntent);
 
         // تعریف Handler برای دریافت پیام‌ها
         Handler handler = new Handler(Looper.getMainLooper()) {
@@ -146,7 +147,7 @@ public class NextActivity extends AppCompatActivity {
             @Override
             public void run() {
                 // اجرای عملیات شبکه در یک Thread جداگانه
-                new Thread(() -> sendMessageToGadget(createJsonMessage())).start();
+//                new Thread(() -> sendMessageToGadget(createJsonMessage())).start();
             }
         };
 
@@ -181,6 +182,8 @@ public class NextActivity extends AppCompatActivity {
         // متوقف کردن سرویس سوکت هنگام بسته شدن Activity
         Intent socketServiceIntent = new Intent(this, MySocketService.class);
         stopService(socketServiceIntent);
+        Intent serviceIntent = new Intent(this, GadgetCommunicationService.class);
+        startService(serviceIntent);
 
         // متوقف کردن ضبط صدا
         if (isRecording) {
@@ -287,191 +290,191 @@ public class NextActivity extends AppCompatActivity {
         }
     }
 
-    private String createJsonMessage() {
-        try {
-            GadgetData gadgetData = new GadgetData(receivedMessage);
-
-            // دسترسی به مقادیر از شیء
-            String temp = gadgetData.getTemp();
-            String fpr = gadgetData.getHRT();
-            String pr = gadgetData.getFHRT();
-            String fsp = gadgetData.getFSPO();
-            String spo = gadgetData.getSPO();
-
-            Log.d("MainActivity", "Temperature: " + temp);
-            Log.d("MainActivity", "FHRT: " + fpr);
-            // ایجاد شیء JSON با مقادیر خاص
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("Cl", "test");
-            jsonObject.put("Temp", temp);
-            jsonObject.put("PR", pr);
-            jsonObject.put("SPO", spo);
-            jsonObject.put("M", "4");
-            jsonObject.put("c", "yes");
-            jsonObject.put("v", "0");
-
-            return jsonObject.toString();
-        } catch (Exception e) {
-            Log.e("TAG", "Error creating JSON message", e);
-            return "{}"; // بازگرداندن پیام JSON خالی در صورت بروز خطا
-        }
-    }
-    public void processJsonMessage(String jsonString) {
-        try {
-            // تجزیه پیام JSON به یک شیء JSONObject
-            JSONObject jsonObject = new JSONObject(jsonString);
-
-            // استخراج مقادیر کلیدهای مختلف
-            String FHRT = jsonObject.getString("FHRT");
-            String FSPO = jsonObject.getString("FSPO");
-            String FTemp = jsonObject.getString("FTemp");
-            String HRT = jsonObject.getString("HRT");
-            String SPO = jsonObject.getString("SPO");
-            String Temp = jsonObject.getString("Temp");
-            String x = jsonObject.getString("x");
-            String y = jsonObject.getString("y");
-            String z = jsonObject.getString("z");
-            String k1 = jsonObject.getString("k1");
-            String k2 = jsonObject.getString("k2");
+//    private String createJsonMessage() {
+//        try {
+//            GadgetData gadgetData = new GadgetData(receivedMessage);
 //
-//            // نمایش مقادیر یا انجام عملیات دیگر
-//            Log.d("JsonParser", "FHRT: " + FHRT);
-//            Log.d("JsonParser", "FSPO: " + FSPO);
-//            Log.d("JsonParser", "FTemp: " + FTemp);
-//            Log.d("JsonParser", "HRT: " + HRT);
-//            Log.d("JsonParser", "SPO: " + SPO);
-//            Log.d("JsonParser", "Temp: " + Temp);
-//            Log.d("JsonParser", "x: " + x);
-//            Log.d("JsonParser", "y: " + y);
-//            Log.d("JsonParser", "z: " + z);
-//            Log.d("JsonParser", "k1: " + k1);
-//            Log.d("JsonParser", "k2: " + k2);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e("JsonParser", "Error parsing JSON: " + e.getMessage());
-        }
-    }
-
-    public void sendMessageToGadget(String message) {
-        try {
-            // آدرس IP و پورت گجت
-            InetAddress gadgetAddress = InetAddress.getByName("192.168.101.18");
-            int gadgetPort = 5050;
-
-            // ایجاد Socket برای ارسال پیام
-            DatagramSocket socket = new DatagramSocket();
-
-            // تبدیل پیام به آرایه بایت
-            byte[] messageBytes = message.getBytes();
-
-            // ایجاد Packet برای ارسال
-            DatagramPacket packet = new DatagramPacket(messageBytes, messageBytes.length, gadgetAddress, gadgetPort);
-
-            // ارسال Packet
-            socket.send(packet);
-
-            // بستن Socket بعد از ارسال پیام
-            socket.close();
-
-            Log.d("TAG", "Message sent to gadget: " + message);
-
-        } catch (Exception e) {
-            Log.e("TAG", "Error sending message to gadget", e);
-        }
-    }
-    public class GadgetData {
-
-        // متغیرها برای ذخیره مقادیر JSON
-        private String FHRT;
-        private String FSPO;
-        private String FTemp;
-        private String HRT;
-        private String SPO;
-        private String Temp;
-        private String x;
-        private String y;
-        private String z;
-        private String k1;
-        private String k2;
-
-        // سازنده بدون پارامتر
-        public GadgetData() {
-        }
-
-        // سازنده با پارامتر که JSON را به شیء تبدیل می‌کند
-        public GadgetData(String jsonString) {
-            parseJson(jsonString);
-        }
-
-        // متد برای پارس کردن JSON و پر کردن مقادیر
-        private void parseJson(String jsonString) {
-            try {
-                JSONObject jsonObject = new JSONObject(jsonString);
-
-                // پر کردن مقادیر از JSON
-                this.FHRT = jsonObject.optString("FHRT");
-                this.FSPO = jsonObject.optString("FSPO");
-                this.FTemp = jsonObject.optString("FTemp");
-                this.HRT = jsonObject.optString("HRT");
-                this.SPO = jsonObject.optString("SPO");
-                this.Temp = jsonObject.optString("Temp");
-                this.x = jsonObject.optString("x");
-                this.y = jsonObject.optString("y");
-                this.z = jsonObject.optString("z");
-                this.k1 = jsonObject.optString("k1");
-                this.k2 = jsonObject.optString("k2");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Getterها برای دسترسی به مقادیر
-        public String getFHRT() {
-            return FHRT;
-        }
-
-        public String getFSPO() {
-            return FSPO;
-        }
-
-        public String getFTemp() {
-            return FTemp;
-        }
-
-        public String getHRT() {
-            return HRT;
-        }
-
-        public String getSPO() {
-            return SPO;
-        }
-
-        public String getTemp() {
-            return Temp;
-        }
-
-        public String getX() {
-            return x;
-        }
-
-        public String getY() {
-            return y;
-        }
-
-        public String getZ() {
-            return z;
-        }
-
-        public String getK1() {
-            return k1;
-        }
-
-        public String getK2() {
-            return k2;
-        }
-    }
+//            // دسترسی به مقادیر از شیء
+//            String temp = gadgetData.getTemp();
+//            String fpr = gadgetData.getHRT();
+//            String pr = gadgetData.getFHRT();
+//            String fsp = gadgetData.getFSPO();
+//            String spo = gadgetData.getSPO();
+//
+//            Log.d("MainActivity", "Temperature: " + temp);
+//            Log.d("MainActivity", "FHRT: " + fpr);
+//            // ایجاد شیء JSON با مقادیر خاص
+//            JSONObject jsonObject = new JSONObject();
+//            jsonObject.put("Cl", "test");
+//            jsonObject.put("Temp", temp);
+//            jsonObject.put("PR", pr);
+//            jsonObject.put("SPO", spo);
+//            jsonObject.put("M", "4");
+//            jsonObject.put("c", "yes");
+//            jsonObject.put("v", "0");
+//
+//            return jsonObject.toString();
+//        } catch (Exception e) {
+//            Log.e("TAG", "Error creating JSON message", e);
+//            return "{}"; // بازگرداندن پیام JSON خالی در صورت بروز خطا
+//        }
+//    }
+//    public void processJsonMessage(String jsonString) {
+//        try {
+//            // تجزیه پیام JSON به یک شیء JSONObject
+//            JSONObject jsonObject = new JSONObject(jsonString);
+//
+//            // استخراج مقادیر کلیدهای مختلف
+//            String FHRT = jsonObject.getString("FHRT");
+//            String FSPO = jsonObject.getString("FSPO");
+//            String FTemp = jsonObject.getString("FTemp");
+//            String HRT = jsonObject.getString("HRT");
+//            String SPO = jsonObject.getString("SPO");
+//            String Temp = jsonObject.getString("Temp");
+//            String x = jsonObject.getString("x");
+//            String y = jsonObject.getString("y");
+//            String z = jsonObject.getString("z");
+//            String k1 = jsonObject.getString("k1");
+//            String k2 = jsonObject.getString("k2");
+////
+////            // نمایش مقادیر یا انجام عملیات دیگر
+////            Log.d("JsonParser", "FHRT: " + FHRT);
+////            Log.d("JsonParser", "FSPO: " + FSPO);
+////            Log.d("JsonParser", "FTemp: " + FTemp);
+////            Log.d("JsonParser", "HRT: " + HRT);
+////            Log.d("JsonParser", "SPO: " + SPO);
+////            Log.d("JsonParser", "Temp: " + Temp);
+////            Log.d("JsonParser", "x: " + x);
+////            Log.d("JsonParser", "y: " + y);
+////            Log.d("JsonParser", "z: " + z);
+////            Log.d("JsonParser", "k1: " + k1);
+////            Log.d("JsonParser", "k2: " + k2);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.e("JsonParser", "Error parsing JSON: " + e.getMessage());
+//        }
+//    }
+//
+//    public void sendMessageToGadget(String message) {
+//        try {
+//            // آدرس IP و پورت گجت
+//            InetAddress gadgetAddress = InetAddress.getByName("192.168.101.18");
+//            int gadgetPort = 5050;
+//
+//            // ایجاد Socket برای ارسال پیام
+//            DatagramSocket socket = new DatagramSocket();
+//
+//            // تبدیل پیام به آرایه بایت
+//            byte[] messageBytes = message.getBytes();
+//
+//            // ایجاد Packet برای ارسال
+//            DatagramPacket packet = new DatagramPacket(messageBytes, messageBytes.length, gadgetAddress, gadgetPort);
+//
+//            // ارسال Packet
+//            socket.send(packet);
+//
+//            // بستن Socket بعد از ارسال پیام
+//            socket.close();
+//
+//            Log.d("TAG", "Message sent to gadget: " + message);
+//
+//        } catch (Exception e) {
+//            Log.e("TAG", "Error sending message to gadget", e);
+//        }
+//    }
+//    public class GadgetData {
+//
+//        // متغیرها برای ذخیره مقادیر JSON
+//        private String FHRT;
+//        private String FSPO;
+//        private String FTemp;
+//        private String HRT;
+//        private String SPO;
+//        private String Temp;
+//        private String x;
+//        private String y;
+//        private String z;
+//        private String k1;
+//        private String k2;
+//
+//        // سازنده بدون پارامتر
+//        public GadgetData() {
+//        }
+//
+//        // سازنده با پارامتر که JSON را به شیء تبدیل می‌کند
+//        public GadgetData(String jsonString) {
+//            parseJson(jsonString);
+//        }
+//
+//        // متد برای پارس کردن JSON و پر کردن مقادیر
+//        private void parseJson(String jsonString) {
+//            try {
+//                JSONObject jsonObject = new JSONObject(jsonString);
+//
+//                // پر کردن مقادیر از JSON
+//                this.FHRT = jsonObject.optString("FHRT");
+//                this.FSPO = jsonObject.optString("FSPO");
+//                this.FTemp = jsonObject.optString("FTemp");
+//                this.HRT = jsonObject.optString("HRT");
+//                this.SPO = jsonObject.optString("SPO");
+//                this.Temp = jsonObject.optString("Temp");
+//                this.x = jsonObject.optString("x");
+//                this.y = jsonObject.optString("y");
+//                this.z = jsonObject.optString("z");
+//                this.k1 = jsonObject.optString("k1");
+//                this.k2 = jsonObject.optString("k2");
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        // Getterها برای دسترسی به مقادیر
+//        public String getFHRT() {
+//            return FHRT;
+//        }
+//
+//        public String getFSPO() {
+//            return FSPO;
+//        }
+//
+//        public String getFTemp() {
+//            return FTemp;
+//        }
+//
+//        public String getHRT() {
+//            return HRT;
+//        }
+//
+//        public String getSPO() {
+//            return SPO;
+//        }
+//
+//        public String getTemp() {
+//            return Temp;
+//        }
+//
+//        public String getX() {
+//            return x;
+//        }
+//
+//        public String getY() {
+//            return y;
+//        }
+//
+//        public String getZ() {
+//            return z;
+//        }
+//
+//        public String getK1() {
+//            return k1;
+//        }
+//
+//        public String getK2() {
+//            return k2;
+//        }
+//    }
 
 }
 

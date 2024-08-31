@@ -31,7 +31,7 @@ public class MyUdpServer {
             while (true) {
                 socket.receive(packet); // دریافت داده از گجت
                 String messageFromClient = new String(packet.getData(), 0, packet.getLength());
-                Log.d(TAG, "Message from client: " + messageFromClient);
+//                Log.d(TAG, "Message from client: " + messageFromClient);
 
                 // ارسال پیام به Handler
                 Message msg = handler.obtainMessage(1, messageFromClient);

@@ -92,7 +92,11 @@
             android:foregroundServiceType="microphone"
             android:permission="android.permission.FOREGROUND_SERVICE"
             android:exported="false"/>
-
+        <service
+            android:name=".GadgetCommunicationService"
+            android:foregroundServiceType="connectedDevice"
+            android:exported="false">
+        </service>
 
     </application>
 
