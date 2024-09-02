@@ -33,7 +33,7 @@ public class JsonUploadService extends Service {
     public static final int MESSAGE_RECEIVED = 2; // Message ID برای شناسایی پیام
 
     private Timer uploadTimer;
-    private String receivedMessage = "{}";
+    private String receivedMessage;
     private String serverUrl;
     private final IBinder binder = new LocalBinder();
     private Handler handler;

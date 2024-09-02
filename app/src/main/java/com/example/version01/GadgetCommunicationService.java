@@ -39,7 +39,7 @@ public class GadgetCommunicationService extends Service {
     private Runnable uploadRunnable;
     private JsonUploadService jsonUploadService;
     private boolean isBound = false;
-    private String receivedMessage = "{}"; // Default to empty JSON
+    private String receivedMessage ; // Default to empty JSON
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -204,7 +204,7 @@ public class GadgetCommunicationService extends Service {
             return jsonObject.toString();
         } catch (Exception e) {
             Log.e(TAG, "Error creating JSON message", e);
-            return "{}"; // Return an empty JSON object in case of error
+            return null; // Return an empty JSON object in case of error
         }
     }
 

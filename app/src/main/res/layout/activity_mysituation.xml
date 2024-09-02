@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout9"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layoutDirection="rtl">
 
     <Button
         android:id="@+id/back"
@@ -12,65 +12,583 @@
         android:layout_height="60dp"
         android:text="Button"
         app:icon="@drawable/_114883"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
+        app:layout_constraintHorizontal_bias="0.96"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.00999999" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/scrollView3"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/calculate_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/back">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:orientation="vertical">
 
+            <!-- سوال ESS 1 -->
             <TextView
-                android:id="@+id/questionText"
+                android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#000000" />
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="1. نشسته در حال خواندن و مطالعه:"
+                android:textSize="18sp" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/optionsGroup"
-                android:layout_width="match_parent"
+            <RadioGroup
+                android:id="@+id/q1_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/q1_option0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0: هرگز خوابم نمی‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q1_option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1: کمی خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q1_option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2: خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q1_option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3: خیلی خوابم می‌برد" />
+            </RadioGroup>
+
+            <!-- سوال ESS 2 -->
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/option1"
-                app:layout_constraintTop_toTopOf="@+id/option1">
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="2. نشسته در حال تماشای تلویزیون:"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/q2_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
                 <RadioButton
-                    android:id="@+id/option1"
+                    android:id="@+id/q2_option0"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Option 1"
-                    tools:layout_editor_absoluteX="84dp"
-                    tools:layout_editor_absoluteY="0dp" />
+                    android:text="0: هرگز خوابم نمی‌برد" />
 
                 <RadioButton
-                    android:id="@+id/option2"
+                    android:id="@+id/q2_option1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Option 2"
-                    tools:layout_editor_absoluteX="-2dp"
-                    tools:layout_editor_absoluteY="0dp" />
+                    android:text="1: کمی خوابم می‌برد" />
 
-                <!-- Add more RadioButtons as needed -->
+                <RadioButton
+                    android:id="@+id/q2_option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2: خوابم می‌برد" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <RadioButton
+                    android:id="@+id/q2_option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3: خیلی خوابم می‌برد" />
+            </RadioGroup>
+
+            <!-- سوال ESS 3 -->
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="3. در یک جلسه یا دورهمی:"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/q3_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/q3_option0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0: هرگز خوابم نمی‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q3_option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1: کمی خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q3_option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2: خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q3_option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3: خیلی خوابم می‌برد" />
+            </RadioGroup>
+
+            <!-- سوال ESS 4 -->
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="4. در یک اتومبیل در حال نشستن به عنوان مسافر:"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/q4_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/q4_option0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0: هرگز خوابم نمی‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q4_option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1: کمی خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q4_option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2: خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q4_option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3: خیلی خوابم می‌برد" />
+            </RadioGroup>
+
+            <!-- سوال ESS 5 -->
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="5. در حال استراحت پس از ناهار:"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/q5_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/q5_option0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0: هرگز خوابم نمی‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q5_option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1: کمی خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q5_option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2: خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q5_option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3: خیلی خوابم می‌برد" />
+            </RadioGroup>
+
+            <!-- سوال ESS 6 -->
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="6. در حال صحبت کردن با کسی:"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/q6_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/q6_option0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0: هرگز خوابم نمی‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q6_option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1: کمی خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q6_option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2: خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q6_option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3: خیلی خوابم می‌برد" />
+            </RadioGroup>
+
+            <!-- سوال ESS 7 -->
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="7. هنگام رانندگی:"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/q7_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/q7_option0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0: هرگز خوابم نمی‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q7_option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1: کمی خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q7_option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2: خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q7_option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3: خیلی خوابم می‌برد" />
+            </RadioGroup>
+
+            <!-- سوال ESS 8 -->
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="8. هنگام حضور در یک مکان عمومی (مثلاً سینما):"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/q8_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/q8_option0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0: هرگز خوابم نمی‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q8_option1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1: کمی خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q8_option2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2: خوابم می‌برد" />
+
+                <RadioButton
+                    android:id="@+id/q8_option3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3: خیلی خوابم می‌برد" />
+            </RadioGroup>
+
+            <!-- سوال STOP-BANG 1 -->
+            <TextView
+                android:id="@+id/textViewStopBangQ1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="1) آیا شما خروپف می‌کنید؟"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/stopBang_q1_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/stopBang_q1_option_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بله" />
+
+                <RadioButton
+                    android:id="@+id/stopBang_q1_option_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خیر" />
+            </RadioGroup>
+
+            <!-- سوال STOP-BANG 2 -->
+            <TextView
+                android:id="@+id/textViewStopBangQ2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="2) آیا در طول روز خواب‌آلود هستید؟"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/stopBang_q2_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/stopBang_q2_option_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بله" />
+
+                <RadioButton
+                    android:id="@+id/stopBang_q2_option_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خیر" />
+            </RadioGroup>
+
+            <!-- سوال STOP-BANG 3 -->
+            <TextView
+                android:id="@+id/textViewStopBangQ3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="3) آیا کسی به شما گفته است که در خواب تنفس شما متوقف می‌شود؟"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/stopBang_q3_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/stopBang_q3_option_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بله" />
+
+                <RadioButton
+                    android:id="@+id/stopBang_q3_option_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خیر" />
+            </RadioGroup>
+
+            <!-- سوال STOP-BANG 4 -->
+            <TextView
+                android:id="@+id/textViewStopBangQ4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="4) آیا شما فشار خون بالا دارید؟"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/stopBang_q4_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/stopBang_q4_option_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بله" />
+
+                <RadioButton
+                    android:id="@+id/stopBang_q4_option_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خیر" />
+            </RadioGroup>
+
+            <!-- سوال STOP-BANG 5 -->
+            <TextView
+                android:id="@+id/textViewStopBangQ5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="5) آیا BMI شما بیشتر از 35 است؟"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/stopBang_q5_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/stopBang_q5_option_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بله" />
+
+                <RadioButton
+                    android:id="@+id/stopBang_q5_option_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خیر" />
+            </RadioGroup>
+
+            <!-- سوال STOP-BANG 6 -->
+            <TextView
+                android:id="@+id/textViewStopBangQ6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="6) آیا شما بالای 50 سال سن دارید؟"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/stopBang_q6_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/stopBang_q6_option_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بله" />
+
+                <RadioButton
+                    android:id="@+id/stopBang_q6_option_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خیر" />
+            </RadioGroup>
+
+            <!-- سوال STOP-BANG 7 -->
+            <TextView
+                android:id="@+id/textViewStopBangQ7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="7) آیا شما مرد هستید؟"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/stopBang_q7_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/stopBang_q7_option_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بله" />
+
+                <RadioButton
+                    android:id="@+id/stopBang_q7_option_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خیر" />
+            </RadioGroup>
+
+            <!-- سوال STOP-BANG 8 -->
+            <TextView
+                android:id="@+id/textViewStopBangQ8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:text="8) آیا شما دیابت دارید؟"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/stopBang_q8_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/stopBang_q8_option_yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="بله" />
+
+                <RadioButton
+                    android:id="@+id/stopBang_q8_option_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="خیر" />
+            </RadioGroup>
+
         </LinearLayout>
-        <!-- سوالات و گزینه‌ها در اینجا اضافه می‌شوند -->
+    </ScrollView>
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <Button
+        android:id="@+id/calculate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="محاسبه"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -187,7 +187,11 @@ public class OpenAIActivity extends AppCompatActivity {
                 "Location: " + userResponse.getLocation() + "\n" +
                 "Job: " + userResponse.getJob() + "\n" +
                 "Disease Records: " + userResponse.getDiseaseRecords() + "\n" +
-                "Hobby: " + userResponse.getHobby();
+                "Hobby: " + userResponse.getHobby() + "\n" +
+                "totalScoreESS: " + userResponse.gettotalScoreESS() + "\n" +
+                "resultESS: " + userResponse.getresultESS() + "\n" +
+                "totalScoreSTOPBANG: " + userResponse.gettotalScoreSTOPBANG() + "\n" +
+                "resultSTOPBANG: " + userResponse.getresultSTOPBANG();
     }
     private String createPromptFromUserData1(UserResponse userResponse) {
         EditText AskEditText = findViewById(R.id.prompt);
@@ -206,6 +210,10 @@ public class OpenAIActivity extends AppCompatActivity {
         private String job;
         private String diseaseRecords;
         private String hobby;
+        private String totalScoreESS;
+        private String resultESS;
+        private String totalScoreSTOPBANG;
+        private String resultSTOPBANG;
         private String status;
         private String message;
 
@@ -226,6 +234,14 @@ public class OpenAIActivity extends AppCompatActivity {
         public void setDiseaseRecords(String diseaseRecords) { this.diseaseRecords = diseaseRecords; }
         public String getHobby() { return hobby; }
         public void setHobby(String hobby) { this.hobby = hobby; }
+        public String gettotalScoreESS() { return totalScoreESS; }
+        public void settotalScoreESS(String totalScoreESS) { this.totalScoreESS = totalScoreESS; }
+        public String getresultESS() { return resultESS; }
+        public void setresultESS(String resultESS) { this.resultESS = resultESS; }
+        public String gettotalScoreSTOPBANG() { return totalScoreSTOPBANG; }
+        public void settotalScoreSTOPBANG(String totalScoreSTOPBANG) { this.totalScoreSTOPBANG = totalScoreSTOPBANG; }
+        public String getresultSTOPBANG() { return resultSTOPBANG; }
+        public void setresultSTOPBANG(String resultSTOPBANG) { this.resultSTOPBANG = resultSTOPBANG; }
         public String getStatus() { return status; }
         public void setStatus(String status) { this.status = status; }
         public String getMessage() { return message; }
