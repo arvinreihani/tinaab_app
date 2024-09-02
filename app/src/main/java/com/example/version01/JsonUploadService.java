@@ -6,17 +6,19 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,17 +29,21 @@ public class JsonUploadService extends Service {
 
     private static final String TAG = "JsonUploadService";
     private static final String CHANNEL_ID = "JsonUploadServiceChannel";
-    private static final long UPLOAD_INTERVAL_MS = 4000; // 4 seconds
+    private static final long UPLOAD_INTERVAL_MS = 500; // 4 seconds
+    public static final int MESSAGE_RECEIVED = 2; // Message ID برای شناسایی پیام
 
     private Timer uploadTimer;
     private String receivedMessage = "{}";
     private String serverUrl;
+    private final IBinder binder = new LocalBinder();
+    private Handler handler;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service Created");
         createNotificationChannel();
+
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("JSON Upload Service")
                 .setContentText("Service is running")
@@ -45,23 +51,51 @@ public class JsonUploadService extends Service {
                 .setContentIntent(createPendingIntent()) // Ensure the notification is interactable
                 .build();
         startForeground(1, notification);
+
+        handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == 2) {
+                    receivedMessage = (String) msg.obj;
+                    Log.d(TAG, "Received message via Handler: " + receivedMessage);
+                    // شروع فرآیند آپلود
+                    startUploadingMessages();
+                }
+            }
+        };
+    }
+
+    public class LocalBinder extends Binder {
+        public JsonUploadService getService() {
+            return JsonUploadService.this;
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             serverUrl = intent.getStringExtra("serverUrl");
-            receivedMessage = intent.getStringExtra("receivedMessage");
+//            receivedMessage = intent.getStringExtra("receivedMessage");
+            Log.d(TAG, "onStartCommand called with intent: " + receivedMessage);
 
             if (serverUrl == null || receivedMessage == null) {
                 Log.e(TAG, "Server URL or received message is null");
-//                stopSelf(); // Stop the service if URL or message is not provided
-//                return START_NOT_STICKY;
+            } else {
+                startUploadingMessages();
             }
-
-            startUploadingMessages();
         }
-        return START_STICKY; // Ensure service is restarted if killed
+        handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == MESSAGE_RECEIVED) {
+                    receivedMessage = (String) msg.obj;
+                    Log.d(TAG, "Received message via Handler: " + receivedMessage);
+                    // شروع فرآیند آپلود
+                    startUploadingMessages();
+                }
+            }
+        };
+        return START_STICKY;
     }
 
     @Override
@@ -73,7 +107,11 @@ public class JsonUploadService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
+    }
+
+    public Handler getHandler() {
+        return handler;
     }
 
     private void startUploadingMessages() {
@@ -100,9 +138,7 @@ public class JsonUploadService extends Service {
     private void uploadJson(String jsonMessage, String serverUrl) {
         new Thread(() -> {
             HttpURLConnection connection = null;
-            BufferedReader reader = null;
             try {
-                // Check if receivedMessage is valid
                 if (jsonMessage == null || jsonMessage.trim().isEmpty()) {
                     Log.e(TAG, "Received message is null or empty");
                     return;
@@ -117,7 +153,7 @@ public class JsonUploadService extends Service {
                 }
 
                 URL url = new URL(serverUrl);
-                Log.d(TAG, "Uploading to URL: " + url.toString()); // Log the URL
+                Log.d(TAG, "Uploading to URL: " + url.toString());
 
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
@@ -125,48 +161,30 @@ public class JsonUploadService extends Service {
                 connection.setDoOutput(true);
 
                 try (OutputStream os = connection.getOutputStream()) {
-                    os.write(jsonObject.toString().getBytes("UTF-8"));
+                    String jsonString = jsonObject.toString();
+                    os.write(jsonString.getBytes("UTF-8"));
                     os.flush();
+                    Log.d(TAG, "JSON Content Uploaded: " + jsonString);
                 }
 
                 int responseCode = connection.getResponseCode();
                 Log.d(TAG, "Response Code: " + responseCode);
 
-                // Read the response from the server
-                InputStream inputStream = connection.getInputStream();
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                Log.d(TAG, "Server Response: " + response.toString());
-
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    Log.d(TAG, "Upload successful");
-                    Log.d(TAG, "Uploaded to URL: " + url.toString()); // Log the URL of the upload
+                    Log.d(TAG, "Upload successful to URL: " + url.toString());
                 } else {
                     Log.d(TAG, "Server returned: " + responseCode);
-                    Log.d(TAG, "Failed to upload to URL: " + url.toString()); // Log the URL of the failed upload
                 }
 
             } catch (Exception e) {
                 Log.e(TAG, "Error uploading JSON: ", e);
             } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        Log.e(TAG, "Error closing reader: ", e);
-                    }
-                }
                 if (connection != null) {
                     connection.disconnect();
                 }
             }
         }).start();
     }
-
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

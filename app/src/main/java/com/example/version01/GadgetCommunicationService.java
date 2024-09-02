@@ -5,46 +5,19 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.provider.Settings;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import org.json.JSONObject;
-
-import org.json.JSONException;
-
-import java.util.Timer;
-import java.util.TimerTask;
 import androidx.core.app.NotificationCompat;
-
 import org.json.JSONObject;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -58,85 +31,141 @@ public class GadgetCommunicationService extends Service {
     private static final String GADGET_IP = "192.168.249.18"; // IP address of the gadget
     private static final int GADGET_PORT = 5050; // Port of the gadget
     private static final int SEND_INTERVAL_MS = 2000; // 2 seconds
+    private static final long UPLOAD_INTERVAL_MS = 500; // 0.5 seconds
 
     private Timer timer;
-    private String receivedMessage = "{}"; // Default to empty JSON
     private Handler handler;
+    private Handler uploadHandler;
+    private Runnable uploadRunnable;
+    private JsonUploadService jsonUploadService;
+    private boolean isBound = false;
+    private String receivedMessage = "{}"; // Default to empty JSON
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            JsonUploadService.LocalBinder binder = (JsonUploadService.LocalBinder) service;
+            jsonUploadService = binder.getService();
+            isBound = true;
+            // Start sending messages to the upload service every 0.5 seconds
+            startUploadScheduler();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    };
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "Service Created");
         createNotificationChannel();
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Gadget Communication Service")
-                .setContentText("Service is running")
-                .setSmallIcon(R.drawable.ic_notification) // Replace with your notification icon
-                .setContentIntent(createPendingIntent()) // Ensure the notification is interactable
-                .build();
-        startForeground(1, notification);
-        startSendingMessages();
-
-        // Initialize the handler
-        Handler handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == 1) {
-                    receivedMessage = (String) msg.obj;
-                    Log.d(TAG, "Message received from socket: " + receivedMessage);
-                    // Process the received message
-                } else {
-                    Log.e(TAG, "Unexpected message type");
-                }
-            }
-        };
-
-        // Set handler for socket service
-        MySocketService.setHandler(handler);
-
-
+        startForegroundService();
+        bindToJsonUploadService();
+        setupHandlerForSocketService();
+        setupUploadHandler();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Handler handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                if (msg.what == 1) {
-                    receivedMessage = (String) msg.obj;
-                    Log.d(TAG, "Message received from socket: " + receivedMessage);
-                    // Process the received message
-                } else {
-                    Log.e(TAG, "Unexpected message type");
-                }
-            }
-        };
-
-        // Set handler for socket service
-        MySocketService.setHandler(handler);
         if (intent != null && intent.hasExtra("username")) {
             String username = intent.getStringExtra("username");
-            Log.d("AudioRecordingService", "Received username: " + username);
-            Intent serviceIntent1 = new Intent(this, JsonUploadService.class);
-            serviceIntent1.putExtra("serverUrl", "https://tinaab.ir/save_json.php?username=" + username);
-            serviceIntent1.putExtra("receivedMessage", receivedMessage);
-            startService(serviceIntent1);
+            Log.d(TAG, "Received username: " + username);
+            startJsonUploadService(username);
         }
-        Log.d(TAG, "onStartCommand called with intent: " + intent);
-        return START_STICKY; // Ensure service is restarted if killed
 
+        // Send message to upload service if bound
+        if (isBound) {
+            sendMessageToUploadService();
+        }
+
+        return START_STICKY; // Ensure service is restarted if killed
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         stopSendingMessages();
+        stopUploadScheduler();
         Log.d(TAG, "Service Destroyed");
+        unbindService(connection); // Unbind from JsonUploadService
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void startForegroundService() {
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Gadget Communication Service")
+                .setContentText("Service is running")
+                .setSmallIcon(R.drawable.ic_notification) // Replace with your notification icon
+                .setContentIntent(createPendingIntent())
+                .build();
+        startForeground(1, notification);
+        startSendingMessages(); // Start sending messages to gadget every 2 seconds
+    }
+
+    private void bindToJsonUploadService() {
+        Intent intent = new Intent(this, JsonUploadService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void setupHandlerForSocketService() {
+        handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == 1) {
+                    receivedMessage = (String) msg.obj;
+                    Log.d(TAG, "Message received from socket: " + receivedMessage);
+                    // Process the received message
+                } else {
+                    Log.e(TAG, "Unexpected message type");
+                }
+            }
+        };
+        MySocketService.setHandler(handler);
+    }
+
+    private void setupUploadHandler() {
+        uploadHandler = new Handler(Looper.getMainLooper());
+        uploadRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isBound) {
+                    sendMessageToUploadService();
+                }
+                uploadHandler.postDelayed(this, UPLOAD_INTERVAL_MS);
+            }
+        };
+    }
+
+    private void startUploadScheduler() {
+        uploadHandler.post(uploadRunnable);
+    }
+
+    private void stopUploadScheduler() {
+        uploadHandler.removeCallbacks(uploadRunnable);
+    }
+
+    private void startJsonUploadService(String username) {
+        Intent serviceIntent = new Intent(this, JsonUploadService.class);
+        serviceIntent.putExtra("serverUrl", "https://tinaab.ir/save_json.php?username=" + username);
+        serviceIntent.putExtra("receivedMessage", receivedMessage);
+        startService(serviceIntent);
+    }
+
+    private void sendMessageToUploadService() {
+        if (jsonUploadService != null && jsonUploadService.getHandler() != null) {
+            Message message = jsonUploadService.getHandler().obtainMessage(2, receivedMessage);
+            jsonUploadService.getHandler().sendMessage(message);
+            Log.d(TAG, "Message sent to JsonUploadService: " + receivedMessage);
+        } else {
+            Log.e(TAG, "Unable to send message, service not bound or handler is null");
+        }
     }
 
     private void startSendingMessages() {
@@ -162,22 +191,12 @@ public class GadgetCommunicationService extends Service {
         try {
             GadgetData gadgetData = new GadgetData(receivedMessage);
 
-            // Access values from the GadgetData object
-            String temp = gadgetData.getTemp();
-            String fpr = gadgetData.getHRT();
-            String pr = gadgetData.getFHRT();
-            String fsp = gadgetData.getFSPO();
-            String spo = gadgetData.getSPO();
-
-            Log.d(TAG, "Temperature: " + temp);
-            Log.d(TAG, "FHRT: " + fpr);
-
             // Create a JSON object with specific values
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("Cl", "test");
-            jsonObject.put("Temp", temp);
-            jsonObject.put("PR", pr);
-            jsonObject.put("SPO", fsp);
+            jsonObject.put("Temp", gadgetData.getTemp());
+            jsonObject.put("PR", gadgetData.getFHRT());
+            jsonObject.put("SPO", gadgetData.getFSPO());
             jsonObject.put("M", "4");
             jsonObject.put("c", "yes");
             jsonObject.put("v", "0");
