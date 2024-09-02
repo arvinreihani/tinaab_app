@@ -24,8 +24,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import org.json.JSONObject;
-
+import org.json.JSONObject;
+import android.os.AsyncTask;
+import android.util.Log;
+import org.json.JSONObject;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import org.json.JSONException;
+import org.json.JSONStringer;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,6 +41,11 @@ public class NextActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 100;
     private Button btnRecord;
+    private static final String TAG = "NextActivity";
+    private static final long REPEAT_INTERVAL = 4000; // 4 ثانیه
+    private Runnable runnable;
+    private boolean isRunning;
+
     private boolean isRecording = false;
     private CountDownTimer countDownTimer;
     private TextView jsonTextView;
@@ -56,11 +68,9 @@ public class NextActivity extends AppCompatActivity {
 
 
         // شروع سرویس سوکت
-        Intent socketServiceIntent = new Intent(this, MySocketService.class);
-        startService(socketServiceIntent);
 
-        Intent serviceIntent = new Intent(this, GadgetCommunicationService.class);
-        startService(serviceIntent);
+
+
 
         // تعریف Handler برای دریافت پیام‌ها
         Handler handler = new Handler(Looper.getMainLooper()) {
@@ -85,6 +95,7 @@ public class NextActivity extends AppCompatActivity {
             String username = getIntent().getStringExtra("username");
             Intent profileIntent = new Intent(NextActivity.this, ProfileActivity.class);
             profileIntent.putExtra("username", username);
+            profileIntent.putExtra("receivedMessage", receivedMessage);
             startActivity(profileIntent);
         });
 
@@ -115,7 +126,20 @@ public class NextActivity extends AppCompatActivity {
             situationIntent.putExtra("username", username);
             startActivity(situationIntent);
         });
+        String username = getIntent().getStringExtra("username");
 
+        Intent socketServiceIntent = new Intent(this, MySocketService.class);
+        startService(socketServiceIntent);
+
+        Intent serviceIntent = new Intent(this, GadgetCommunicationService.class);
+        serviceIntent.putExtra("username", username);
+        startService(serviceIntent);
+
+
+//        Intent serviceIntent1 = new Intent(this, JsonUploadService.class);
+//        serviceIntent1.putExtra("serverUrl", "https://tinaab.ir/save_json.php?username" + username);
+//        serviceIntent1.putExtra("receivedMessage", receivedMessage);
+//        startService(serviceIntent1);
         if (!hasRequiredPermissions()) {
             requestForPermissions();
         }
@@ -135,9 +159,79 @@ public class NextActivity extends AppCompatActivity {
             }
         });
 
-        // شروع ارسال پیام‌ها
-        startSendingMessages();
+
+        if (receivedMessage == null) {
+            Log.e(TAG, "Received message is null");
+            return; // یا مقادیر پیش‌فرض استفاده کنید
+        }
+
+        if (username == null) {
+            Log.e(TAG, "Username is null");
+            return; // یا مقادیر پیش‌فرض استفاده کنید
+        }
+
+        Log.i(TAG, "Username: " + username);
+
+        // آدرس فایل PHP در سرور
+        String serverUrl = "https://tinaab.ir/save_json.php?username=" + username;
+
+        // شروع ارسال پیام‌ها هر 4 ثانیه
+        startRepeatingTask();
+        Log.e(TAG, "Username is null");
+
+        // اولین بار آپلود JSON
+        uploadJson(receivedMessage, serverUrl);
     }
+
+    private void startRepeatingTask() {
+        handler = new Handler();
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                // آپلود JSON به سرور هر 4 ثانیه
+                String receivedMessage = getIntent().getStringExtra("receivedMessage");
+                String username = getIntent().getStringExtra("username");
+
+                if (receivedMessage != null && username != null) {
+                    String serverUrl = "https://tinaab.ir/save_json.php?username=" + username;
+                    uploadJson(receivedMessage, serverUrl);
+                }
+
+                // برنامه‌ریزی برای اجرای مجدد
+                if (isRunning) {
+                    handler.postDelayed(this, REPEAT_INTERVAL);
+                }
+            }
+        };
+
+        isRunning = true;
+        handler.post(runnable);
+    }
+
+    private void uploadJson(String receivedMessage, String serverUrl) {
+        try {
+            JSONObject jsonObject = new JSONObject(receivedMessage);
+
+            // استفاده از داده‌های JSON
+            String name = jsonObject.optString("name", "Unknown");
+            int age = jsonObject.optInt("age", 0);
+            JsonUploader uploader = new JsonUploader();
+            uploader.uploadJson(jsonObject, serverUrl);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Error parsing JSON: ", e);
+        }
+    }
+
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        // توقف اجرای Runnable هنگام نابودی Activity
+//        if (handler != null && runnable != null) {
+//            handler.removeCallbacks(runnable);
+//        }
+//        isRunning = false;
+//    }
 
     private void startSendingMessages() {
         timer = new Timer();
@@ -165,6 +259,7 @@ public class NextActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e(TAG, "Username is null");
 
         // هیچ کد اضافی در اینجا نیاز نیست
     }
@@ -475,7 +570,60 @@ public class NextActivity extends AppCompatActivity {
 //            return k2;
 //        }
 //    }
+public class JsonUploader {
 
+    private static final String TAG = "JsonUploader";
+
+    public void uploadJson(JSONObject jsonData, String serverUrl) {
+        new UploadTask().execute(jsonData, serverUrl);
+    }
+
+    private class UploadTask extends AsyncTask<Object, Void, String> {
+
+        @Override
+        protected String doInBackground(Object... params) {
+            JSONObject jsonData = (JSONObject) params[0];
+            String serverUrl = (String) params[1];
+
+            HttpURLConnection connection = null;
+            try {
+                // باز کردن اتصال به سرور
+                URL url = new URL(serverUrl);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                connection.setDoOutput(true);
+
+                // ارسال داده‌ها
+                OutputStream os = connection.getOutputStream();
+                os.write(jsonData.toString().getBytes("UTF-8"));
+                os.close();
+
+                // بررسی وضعیت پاسخ سرور
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    return "Upload successful";
+                } else {
+                    return "Server returned: " + responseCode;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "Error: " + e.getMessage();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            // نتیجه ارسال را اینجا بررسی کنید
+            Log.d(TAG, result);
+        }
+    }
+}
 }
 
 

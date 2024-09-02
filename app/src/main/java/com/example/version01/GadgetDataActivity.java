@@ -52,7 +52,7 @@ public class GadgetDataActivity extends AppCompatActivity {
         lineChart2 = findViewById(R.id.lineChart1);
         pieChart = findViewById(R.id.pieChart);
 
-        handler = new Handler(Looper.getMainLooper()) {
+        Handler handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 1) {
@@ -65,6 +65,8 @@ public class GadgetDataActivity extends AppCompatActivity {
             }
         };
         MySocketService.setHandler(handler);
+//        Intent serviceIntent = new Intent(this, GadgetCommunicationService.class);
+//        startService(serviceIntent);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +77,24 @@ public class GadgetDataActivity extends AppCompatActivity {
             }
         });
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Handler handler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                if (msg.what == 1) {
+                    receivedMessage = (String) msg.obj;
+                    Log.d(TAG, "Message received from socket: " + receivedMessage);
+                    updateCharts();
+                } else {
+                    Log.e(TAG, "Unknown message received");
+                }
+            }
+        };
+        MySocketService.setHandler(handler);
+        // هیچ کد اضافی در اینجا نیاز نیست
+    }
     private void updateCharts() {
         GadgetData gadgetData = new GadgetData(receivedMessage);
 
@@ -243,9 +262,5 @@ public class GadgetDataActivity extends AppCompatActivity {
         public String getK2() {
             return k2;
         }
-    }
-
-    public static void setHandler(Handler newHandler) {
-        handler = newHandler;
     }
 }

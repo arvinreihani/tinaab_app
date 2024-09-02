@@ -55,7 +55,7 @@ public class GadgetCommunicationService extends Service {
 
     private static final String TAG = "GadgetCommunicationService";
     private static final String CHANNEL_ID = "GadgetServiceChannel";
-    private static final String GADGET_IP = "192.168.101.18"; // IP address of the gadget
+    private static final String GADGET_IP = "192.168.249.18"; // IP address of the gadget
     private static final int GADGET_PORT = 5050; // Port of the gadget
     private static final int SEND_INTERVAL_MS = 2000; // 2 seconds
 
@@ -93,6 +93,8 @@ public class GadgetCommunicationService extends Service {
 
         // Set handler for socket service
         MySocketService.setHandler(handler);
+
+
     }
 
     @Override
@@ -112,6 +114,14 @@ public class GadgetCommunicationService extends Service {
 
         // Set handler for socket service
         MySocketService.setHandler(handler);
+        if (intent != null && intent.hasExtra("username")) {
+            String username = intent.getStringExtra("username");
+            Log.d("AudioRecordingService", "Received username: " + username);
+            Intent serviceIntent1 = new Intent(this, JsonUploadService.class);
+            serviceIntent1.putExtra("serverUrl", "https://tinaab.ir/save_json.php?username=" + username);
+            serviceIntent1.putExtra("receivedMessage", receivedMessage);
+            startService(serviceIntent1);
+        }
         Log.d(TAG, "onStartCommand called with intent: " + intent);
         return START_STICKY; // Ensure service is restarted if killed
 
@@ -167,7 +177,7 @@ public class GadgetCommunicationService extends Service {
             jsonObject.put("Cl", "test");
             jsonObject.put("Temp", temp);
             jsonObject.put("PR", pr);
-            jsonObject.put("SPO", spo);
+            jsonObject.put("SPO", fsp);
             jsonObject.put("M", "4");
             jsonObject.put("c", "yes");
             jsonObject.put("v", "0");
