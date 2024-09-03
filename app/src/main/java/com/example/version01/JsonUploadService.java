@@ -57,7 +57,7 @@ public class JsonUploadService extends Service {
             public void handleMessage(Message msg) {
                 if (msg.what == 2) {
                     receivedMessage = (String) msg.obj;
-                    Log.d(TAG, "Received message via Handler: " + receivedMessage);
+//                    Log.d(TAG, "Received message via Handler: " + receivedMessage);
                     // شروع فرآیند آپلود
                     startUploadingMessages();
                 }
@@ -76,10 +76,10 @@ public class JsonUploadService extends Service {
         if (intent != null) {
             serverUrl = intent.getStringExtra("serverUrl");
 //            receivedMessage = intent.getStringExtra("receivedMessage");
-            Log.d(TAG, "onStartCommand called with intent: " + receivedMessage);
+//            Log.d(TAG, "onStartCommand called with intent: " + receivedMessage);
 
             if (serverUrl == null || receivedMessage == null) {
-                Log.e(TAG, "Server URL or received message is null");
+//                Log.e(TAG, "Server URL or received message is null");
             } else {
                 startUploadingMessages();
             }
@@ -89,7 +89,7 @@ public class JsonUploadService extends Service {
             public void handleMessage(Message msg) {
                 if (msg.what == MESSAGE_RECEIVED) {
                     receivedMessage = (String) msg.obj;
-                    Log.d(TAG, "Received message via Handler: " + receivedMessage);
+//                    Log.d(TAG, "Received message via Handler: " + receivedMessage);
                     // شروع فرآیند آپلود
                     startUploadingMessages();
                 }
@@ -164,7 +164,7 @@ public class JsonUploadService extends Service {
                     String jsonString = jsonObject.toString();
                     os.write(jsonString.getBytes("UTF-8"));
                     os.flush();
-                    Log.d(TAG, "JSON Content Uploaded: " + jsonString);
+//                    Log.d(TAG, "JSON Content Uploaded: " + jsonString);
                 }
 
                 int responseCode = connection.getResponseCode();

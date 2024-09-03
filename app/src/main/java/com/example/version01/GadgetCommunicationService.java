@@ -23,6 +23,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Random;
+import java.util.Calendar;
+
 
 public class GadgetCommunicationService extends Service {
 
@@ -30,7 +33,7 @@ public class GadgetCommunicationService extends Service {
     private static final String CHANNEL_ID = "GadgetServiceChannel";
     private static final String GADGET_IP = "192.168.249.18"; // IP address of the gadget
     private static final int GADGET_PORT = 5050; // Port of the gadget
-    private static final int SEND_INTERVAL_MS = 2000; // 2 seconds
+    private static final int SEND_INTERVAL_MS = 8000; // 2 seconds
     private static final long UPLOAD_INTERVAL_MS = 500; // 0.5 seconds
 
     private Timer timer;
@@ -40,6 +43,11 @@ public class GadgetCommunicationService extends Service {
     private JsonUploadService jsonUploadService;
     private boolean isBound = false;
     private String receivedMessage ; // Default to empty JSON
+    private int abp ; // Default to empty JSON
+    private int bbp ; // Default to empty JSON
+    private int rr ; // Default to empty JSON
+    private String BP ; // Default to empty JSON
+
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -66,6 +74,8 @@ public class GadgetCommunicationService extends Service {
         bindToJsonUploadService();
         setupHandlerForSocketService();
         setupUploadHandler();
+        Random random = new Random();
+        rr = random.nextInt((20) - 10 + 1) + 10;
     }
 
     @Override
@@ -106,7 +116,19 @@ public class GadgetCommunicationService extends Service {
                 .setContentIntent(createPendingIntent())
                 .build();
         startForeground(1, notification);
+        startcalcbp();
+
         startSendingMessages(); // Start sending messages to gadget every 2 seconds
+
+        startSendingMessages1(); // Start sending messages to gadget every 2 seconds
+
+        startSendingMessages2(); // Start sending messages to gadget every 2 seconds
+
+        startSendingMessages3(); // Start sending messages to gadget every 2 seconds
+
+
+        startSetAlarm();
+
     }
 
     private void bindToJsonUploadService() {
@@ -173,11 +195,85 @@ public class GadgetCommunicationService extends Service {
         TimerTask sendTask = new TimerTask() {
             @Override
             public void run() {
-                String jsonMessage = createJsonMessage();
+                String jsonMessage = createJsonMessage("BP:");
                 sendMessageToGadget(jsonMessage);
             }
         };
         timer.scheduleAtFixedRate(sendTask, 0, SEND_INTERVAL_MS);
+    }
+    private void startSendingMessages1() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                String jsonMessage = createJsonMessage(" " + BP);
+                sendMessageToGadget(jsonMessage);
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 2000, SEND_INTERVAL_MS);
+    }
+    private void startSendingMessages2() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                Random random = new Random();
+                int min = rr - 3; // حداقل عدد مورد نظر
+                int max = rr + 3; // حداکثر عدد مورد نظر
+                int a = random.nextInt(max - min + 1) + min;
+                String jsonMessage = createJsonMessage("RR: " + a);
+                sendMessageToGadget(jsonMessage);
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 4000, SEND_INTERVAL_MS);
+    }
+    private void startSendingMessages3() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                Calendar calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY); // ساعت (24 ساعته)
+                int minute = calendar.get(Calendar.MINUTE); // دقیقه
+                String jsonMessage = createJsonMessage(" " + hour + ":" + minute);
+                sendMessageToGadget(jsonMessage);
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 6000, SEND_INTERVAL_MS);
+    }
+    private void startcalcbp() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                Random random = new Random();
+
+                int mina = 70; // حداقل عدد مورد نظر
+                int maxa = 130; // حداکثر عدد مورد نظر
+                int minb = 60; // حداکثر عدد مورد نظر
+                int a = random.nextInt(maxa - mina + 1) + mina;
+                int b = random.nextInt((a - 10) - minb + 1) + minb;
+                BP = a + "|" + b;
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 0, 30000);
+    }
+    private void startSetAlarm() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                Calendar calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY); // ساعت (24 ساعته)
+                int minute = calendar.get(Calendar.MINUTE); // دقیقه
+                GadgetData gadgetData = new GadgetData(receivedMessage);
+                if (gadgetData.getK1() != null && gadgetData.getK1().equals("1")) {
+                    Log.e(TAG, "Error creating JSON message" + hour + ":" + minute);
+
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 0, 200);
     }
 
     private void stopSendingMessages() {
@@ -187,21 +283,37 @@ public class GadgetCommunicationService extends Service {
         }
     }
 
-    private String createJsonMessage() {
+    private String createJsonMessage(String S) {
         try {
             GadgetData gadgetData = new GadgetData(receivedMessage);
 
             // Create a JSON object with specific values
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("Cl", "test");
-            jsonObject.put("Temp", gadgetData.getTemp());
-            jsonObject.put("PR", gadgetData.getFHRT());
-            jsonObject.put("SPO", gadgetData.getFSPO());
-            jsonObject.put("M", "4");
-            jsonObject.put("c", "yes");
-            jsonObject.put("v", "0");
+//            if (Integer.valueOf(gadgetData.getFHRT()) <= 120 || Integer.valueOf(gadgetData.getFHRT()) >= 55 || Integer.valueOf(gadgetData.getFSPO()) <= 100 || Integer.valueOf(gadgetData.getFSPO()) >= 85) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("Cl", S);
+                jsonObject.put("Temp", gadgetData.getTemp());
+                if (Integer.valueOf(gadgetData.getFHRT()) > 120) {
+                    jsonObject.put("PR", "120");
+                }
+                else if (Integer.valueOf(gadgetData.getFHRT()) < 55) {
+                    jsonObject.put("PR", "55");
+                }else {
+                    jsonObject.put("PR", gadgetData.getFHRT());
+                }
+                if (Integer.valueOf(gadgetData.getFSPO()) > 100) {
+                    jsonObject.put("SPO", "100");
+                }
+                else if (Integer.valueOf(gadgetData.getFSPO()) < 85) {
+                    jsonObject.put("SPO", "85");
+                }else {
+                    jsonObject.put("SPO", gadgetData.getFSPO());
+                }
+                jsonObject.put("M", "4");
+                jsonObject.put("c", "yes");
+                jsonObject.put("v", "0");
+                return jsonObject.toString();
 
-            return jsonObject.toString();
+
         } catch (Exception e) {
             Log.e(TAG, "Error creating JSON message", e);
             return null; // Return an empty JSON object in case of error

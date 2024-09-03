@@ -36,7 +36,7 @@ public class MySocketService extends Service {
             public void handleMessage(Message msg) {
                 if (msg.what == 1) {
                     String message = (String) msg.obj;
-                    Log.d(TAG, "Message received from socket: " + message);
+//                    Log.d(TAG, "Message received from socket: " + message);
                     // ارسال پیام به Handler اصلی (Activity)
                     if (handler != null) {
                         handler.obtainMessage(1, message).sendToTarget();
