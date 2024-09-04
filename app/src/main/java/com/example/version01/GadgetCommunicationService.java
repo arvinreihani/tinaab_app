@@ -33,7 +33,7 @@ public class GadgetCommunicationService extends Service {
     private static final String CHANNEL_ID = "GadgetServiceChannel";
     private static final String GADGET_IP = "192.168.249.18"; // IP address of the gadget
     private static final int GADGET_PORT = 5050; // Port of the gadget
-    private static final int SEND_INTERVAL_MS = 8000; // 2 seconds
+    private static final int SEND_INTERVAL_MS = 14000; // 2 seconds
     private static final long UPLOAD_INTERVAL_MS = 500; // 0.5 seconds
 
     private Timer timer;
@@ -43,10 +43,13 @@ public class GadgetCommunicationService extends Service {
     private JsonUploadService jsonUploadService;
     private boolean isBound = false;
     private String receivedMessage ; // Default to empty JSON
-    private int abp ; // Default to empty JSON
-    private int bbp ; // Default to empty JSON
+    private int spo ; // Default to empty JSON
+    private int hrt ; // Default to empty JSON
     private int rr ; // Default to empty JSON
+    private int c = 0; // Default to empty JSON
     private String BP ; // Default to empty JSON
+    private int[] SPOA = new int[20];
+
 
 
     private ServiceConnection connection = new ServiceConnection() {
@@ -75,7 +78,7 @@ public class GadgetCommunicationService extends Service {
         setupHandlerForSocketService();
         setupUploadHandler();
         Random random = new Random();
-        rr = random.nextInt((20) - 10 + 1) + 10;
+        rr = random.nextInt((15) - 8 + 1) + 8;
     }
 
     @Override
@@ -126,6 +129,11 @@ public class GadgetCommunicationService extends Service {
 
         startSendingMessages3(); // Start sending messages to gadget every 2 seconds
 
+        startSendingMessages4(); // Start sending messages to gadget every 2 seconds
+
+        startSendingMessages5(); // Start sending messages to gadget every 2 seconds
+
+        startSendingMessages6(); // Start sending messages to gadget every 2 seconds
 
         startSetAlarm();
 
@@ -199,7 +207,7 @@ public class GadgetCommunicationService extends Service {
                 sendMessageToGadget(jsonMessage);
             }
         };
-        timer.scheduleAtFixedRate(sendTask, 0, SEND_INTERVAL_MS);
+        timer.scheduleAtFixedRate(sendTask, 2000, SEND_INTERVAL_MS);
     }
     private void startSendingMessages1() {
         timer = new Timer();
@@ -210,7 +218,7 @@ public class GadgetCommunicationService extends Service {
                 sendMessageToGadget(jsonMessage);
             }
         };
-        timer.scheduleAtFixedRate(sendTask, 2000, SEND_INTERVAL_MS);
+        timer.scheduleAtFixedRate(sendTask, 4000, SEND_INTERVAL_MS);
     }
     private void startSendingMessages2() {
         timer = new Timer();
@@ -225,7 +233,7 @@ public class GadgetCommunicationService extends Service {
                 sendMessageToGadget(jsonMessage);
             }
         };
-        timer.scheduleAtFixedRate(sendTask, 4000, SEND_INTERVAL_MS);
+        timer.scheduleAtFixedRate(sendTask, 8000, SEND_INTERVAL_MS);
     }
     private void startSendingMessages3() {
         timer = new Timer();
@@ -239,8 +247,44 @@ public class GadgetCommunicationService extends Service {
                 sendMessageToGadget(jsonMessage);
             }
         };
+        timer.scheduleAtFixedRate(sendTask, 12000, SEND_INTERVAL_MS);
+    }
+    private void startSendingMessages4() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                String jsonMessage = createJsonMessage(" tinab");
+                sendMessageToGadget(jsonMessage);
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 0, SEND_INTERVAL_MS);
+    }
+    private void startSendingMessages5() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                String jsonMessage = createJsonMessage(" tinab");
+                sendMessageToGadget(jsonMessage);
+            }
+        };
         timer.scheduleAtFixedRate(sendTask, 6000, SEND_INTERVAL_MS);
     }
+//    private void inputSPOA() {
+//        timer = new Timer();
+//        TimerTask sendTask = new TimerTask() {
+//            @Override
+//            public void run() {
+//                GadgetData gadgetData = new GadgetData(receivedMessage);
+//                spo = (Integer.valueOf(gadgetData.getFSPO()) + Integer.valueOf(gadgetData.getSPO()) ) / 2;
+//                hrt = (Integer.valueOf(gadgetData.getFHRT()) + Integer.valueOf(gadgetData.getHRT()) ) / 2;
+//                SPOA[c] =
+//
+//            }
+//        };
+//        timer.scheduleAtFixedRate(sendTask, 10000, SEND_INTERVAL_MS);
+//    }
     private void startcalcbp() {
         timer = new Timer();
         TimerTask sendTask = new TimerTask() {
@@ -275,7 +319,17 @@ public class GadgetCommunicationService extends Service {
         };
         timer.scheduleAtFixedRate(sendTask, 0, 200);
     }
-
+    private void startSendingMessages6() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                String jsonMessage = createJsonMessage(" tinab");
+                sendMessageToGadget(jsonMessage);
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 10000, SEND_INTERVAL_MS);
+    }
     private void stopSendingMessages() {
         if (timer != null) {
             timer.cancel();
@@ -288,25 +342,26 @@ public class GadgetCommunicationService extends Service {
             GadgetData gadgetData = new GadgetData(receivedMessage);
 
             // Create a JSON object with specific values
-//            if (Integer.valueOf(gadgetData.getFHRT()) <= 120 || Integer.valueOf(gadgetData.getFHRT()) >= 55 || Integer.valueOf(gadgetData.getFSPO()) <= 100 || Integer.valueOf(gadgetData.getFSPO()) >= 85) {
+                spo = (Integer.valueOf(gadgetData.getFSPO()) + Integer.valueOf(gadgetData.getSPO()) ) / 2;
+                hrt = (Integer.valueOf(gadgetData.getFHRT()) + Integer.valueOf(gadgetData.getHRT()) ) / 2;
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("Cl", S);
                 jsonObject.put("Temp", gadgetData.getTemp());
-                if (Integer.valueOf(gadgetData.getFHRT()) > 120) {
+                if (hrt > 120) {
                     jsonObject.put("PR", "120");
                 }
-                else if (Integer.valueOf(gadgetData.getFHRT()) < 55) {
+                else if (hrt < 55) {
                     jsonObject.put("PR", "55");
                 }else {
-                    jsonObject.put("PR", gadgetData.getFHRT());
+                    jsonObject.put("PR", hrt);
                 }
-                if (Integer.valueOf(gadgetData.getFSPO()) > 100) {
+                if (spo > 100) {
                     jsonObject.put("SPO", "100");
                 }
-                else if (Integer.valueOf(gadgetData.getFSPO()) < 85) {
+                else if (spo < 85) {
                     jsonObject.put("SPO", "85");
                 }else {
-                    jsonObject.put("SPO", gadgetData.getFSPO());
+                    jsonObject.put("SPO", spo);
                 }
                 jsonObject.put("M", "4");
                 jsonObject.put("c", "yes");
