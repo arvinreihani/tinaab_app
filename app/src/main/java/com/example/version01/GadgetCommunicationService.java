@@ -31,7 +31,7 @@ public class GadgetCommunicationService extends Service {
 
     private static final String TAG = "GadgetCommunicationService";
     private static final String CHANNEL_ID = "GadgetServiceChannel";
-    private static final String GADGET_IP = "192.168.249.18"; // IP address of the gadget
+    private static final String GADGET_IP = "192.168.62.18"; // IP address of the gadget
     private static final int GADGET_PORT = 5050; // Port of the gadget
     private static final int SEND_INTERVAL_MS = 14000; // 2 seconds
     private static final long UPLOAD_INTERVAL_MS = 500; // 0.5 seconds
@@ -136,6 +136,8 @@ public class GadgetCommunicationService extends Service {
         startSendingMessages6(); // Start sending messages to gadget every 2 seconds
 
         startSetAlarm();
+
+        inputSPOA();
 
     }
 
@@ -271,20 +273,24 @@ public class GadgetCommunicationService extends Service {
         };
         timer.scheduleAtFixedRate(sendTask, 6000, SEND_INTERVAL_MS);
     }
-//    private void inputSPOA() {
-//        timer = new Timer();
-//        TimerTask sendTask = new TimerTask() {
-//            @Override
-//            public void run() {
-//                GadgetData gadgetData = new GadgetData(receivedMessage);
-//                spo = (Integer.valueOf(gadgetData.getFSPO()) + Integer.valueOf(gadgetData.getSPO()) ) / 2;
-//                hrt = (Integer.valueOf(gadgetData.getFHRT()) + Integer.valueOf(gadgetData.getHRT()) ) / 2;
-//                SPOA[c] =
-//
-//            }
-//        };
-//        timer.scheduleAtFixedRate(sendTask, 10000, SEND_INTERVAL_MS);
-//    }
+    private void inputSPOA() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                GadgetData gadgetData = new GadgetData(receivedMessage);
+                if (gadgetData.getFSPO() != null && gadgetData.getSPO() != null) {
+                    spo = (Integer.valueOf(gadgetData.getFSPO()) + Integer.valueOf(gadgetData.getSPO())) / 2;
+                    SPOA[c] = spo;
+                    c += 1;
+                    if (c == 20) {
+                        c = 0;
+                    }
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 500, 500);
+    }
     private void startcalcbp() {
         timer = new Timer();
         TimerTask sendTask = new TimerTask() {
@@ -346,7 +352,7 @@ public class GadgetCommunicationService extends Service {
                 hrt = (Integer.valueOf(gadgetData.getFHRT()) + Integer.valueOf(gadgetData.getHRT()) ) / 2;
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("Cl", S);
-                jsonObject.put("Temp", gadgetData.getTemp());
+                jsonObject.put("Temp", gadgetData.getFTMP());
                 if (hrt > 120) {
                     jsonObject.put("PR", "120");
                 }
@@ -355,14 +361,15 @@ public class GadgetCommunicationService extends Service {
                 }else {
                     jsonObject.put("PR", hrt);
                 }
-                if (spo > 100) {
-                    jsonObject.put("SPO", "100");
-                }
-                else if (spo < 85) {
-                    jsonObject.put("SPO", "85");
-                }else {
-                    jsonObject.put("SPO", spo);
-                }
+//                if (spo > 100) {
+//                    jsonObject.put("SPO", "100");
+//                }
+//                else if (spo < 85) {
+//                    jsonObject.put("SPO", "85");
+//                }else {
+//                    jsonObject.put("SPO", spo);
+//                }
+                jsonObject.put("SPO", calculateAverage());
                 jsonObject.put("M", "4");
                 jsonObject.put("c", "yes");
                 jsonObject.put("v", "0");
@@ -414,7 +421,7 @@ public class GadgetCommunicationService extends Service {
         // Variables for storing JSON values
         private String FHRT;
         private String FSPO;
-        private String FTemp;
+        private String FTMP;
         private String HRT;
         private String SPO;
         private String Temp;
@@ -440,7 +447,7 @@ public class GadgetCommunicationService extends Service {
                 // Populate values from JSON
                 this.FHRT = jsonObject.optString("FHRT");
                 this.FSPO = jsonObject.optString("FSPO");
-                this.FTemp = jsonObject.optString("FTemp");
+                this.FTMP = jsonObject.optString("FTMP");
                 this.HRT = jsonObject.optString("HRT");
                 this.SPO = jsonObject.optString("SPO");
                 this.Temp = jsonObject.optString("Temp");
@@ -463,8 +470,8 @@ public class GadgetCommunicationService extends Service {
             return FSPO;
         }
 
-        public String getFTemp() {
-            return FTemp;
+        public String getFTMP() {
+            return FTMP;
         }
 
         public String getHRT() {
@@ -498,5 +505,12 @@ public class GadgetCommunicationService extends Service {
         public String getK2() {
             return k2;
         }
+    }
+    public int calculateAverage() {
+        int sum = 0;
+        for (int i = 0; i < SPOA.length; i++) {
+            sum += SPOA[i];
+        }
+        return sum / SPOA.length;
     }
 }
