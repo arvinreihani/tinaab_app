@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetLampActivity">
+
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/back"
+        android:layout_width="63dp"
+        android:layout_height="61dp"
+        android:text="Back"
+        app:icon="@drawable/_114883"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.019" />
+
+    <!-- On/Off Button -->
+    <Button
+        android:id="@+id/onoff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="On/Off"
+        app:layout_constraintBottom_toTopOf="@+id/save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back" />
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save State"
+        app:layout_constraintBottom_toTopOf="@+id/brightness_up"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/onoff" />
+
+    <!-- Brightness Up Button -->
+    <Button
+        android:id="@+id/brightness_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Brightness +"
+        app:layout_constraintBottom_toTopOf="@+id/brightness_down"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/save" />
+
+    <!-- Brightness Down Button -->
+    <Button
+        android:id="@+id/brightness_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Brightness -"
+        app:layout_constraintBottom_toTopOf="@+id/speed_up"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/brightness_up" />
+
+    <!-- Speed Up Button -->
+    <Button
+        android:id="@+id/speed_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speed +"
+        app:layout_constraintBottom_toTopOf="@+id/speed_down"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/brightness_down" />
+
+    <!-- Speed Down Button -->
+    <Button
+        android:id="@+id/speed_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="74dp"
+        android:text="Speed -"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarRed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speed_up" />
+
+    <!-- Red SeekBar -->
+
+    <!-- Green SeekBar -->
+    <SeekBar
+        android:id="@+id/seekBarRed"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="255"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarGreen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/speed_down" />
+
+    <SeekBar
+        android:id="@+id/seekBarGreen"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="255"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarBlue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarRed" />
+
+    <!-- Blue SeekBar -->
+    <SeekBar
+        android:id="@+id/seekBarBlue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:max="255"
+        app:layout_constraintBottom_toTopOf="@+id/txtColorPreview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarGreen" />
+
+    <!-- Color Preview -->
+    <TextView
+        android:id="@+id/txtColorPreview"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarBlue" />
+</androidx.constraintlayout.widget.ConstraintLayout>

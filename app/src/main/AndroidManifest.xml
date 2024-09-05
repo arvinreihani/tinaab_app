@@ -79,6 +79,7 @@
         <activity android:name=".MySituationActivity" />
         <activity android:name=".FeedbackActivity" /> <!-- Services -->
         <activity android:name=".SetAlarmActivity" /> <!-- Services -->
+        <activity android:name=".SetLampActivity" /> <!-- Services -->
         <service
             android:name=".MyForegroundService"
             android:exported="false"

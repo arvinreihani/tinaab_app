@@ -65,6 +65,7 @@ public class NextActivity extends AppCompatActivity {
         Button btnsetting = findViewById(R.id.setting);
         Button btnsituation = findViewById(R.id.situation);
         Button btnalarm = findViewById(R.id.Alarm);
+        Button btnlamp = findViewById(R.id.lamp);
         btnRecord = findViewById(R.id.btnRecord);
 
 
@@ -127,12 +128,21 @@ public class NextActivity extends AppCompatActivity {
             situationIntent.putExtra("username", username);
             startActivity(situationIntent);
         });
+
         btnalarm.setOnClickListener(v -> {
             String username = getIntent().getStringExtra("username");
             Intent SetAlarmActivityIntent = new Intent(NextActivity.this, SetAlarmActivity.class);
             SetAlarmActivityIntent.putExtra("username", username);
             startActivity(SetAlarmActivityIntent);
         });
+
+        btnlamp.setOnClickListener(v -> {
+            String username = getIntent().getStringExtra("username");
+            Intent SetLampActivityIntent = new Intent(NextActivity.this, SetLampActivity.class);
+            SetLampActivityIntent.putExtra("username", username);
+            startActivity(SetLampActivityIntent);
+        });
+
         String username = getIntent().getStringExtra("username");
 
         Intent socketServiceIntent = new Intent(this, MySocketService.class);
