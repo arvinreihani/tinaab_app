@@ -81,15 +81,24 @@ public class MyUdpServer {
                 jsonObject.put("FSPO", "100");
             }
             else if (Integer.valueOf(gadgetData.getFSPO()) < 85) {
-                jsonObject.put("FSPO", "95");
-            }else {
+                if (Integer.valueOf(gadgetData.getFSPO()) == 0) {
+                    jsonObject.put("FSPO", "0");
+                }
+                else {
+                    jsonObject.put("SPO", "95");
+                }            }else {
                 jsonObject.put("FSPO", gadgetData.getFSPO());
             }
             if (Integer.valueOf(gadgetData.getSPO()) > 100) {
                 jsonObject.put("SPO", "100");
             }
             else if (Integer.valueOf(gadgetData.getSPO()) < 85) {
+                if (Integer.valueOf(gadgetData.getSPO()) == 0) {
+                    jsonObject.put("SPO", "0");
+                }
+                else {
                 jsonObject.put("SPO", "95");
+            }
             }else {
                 jsonObject.put("SPO", gadgetData.getSPO());
             }

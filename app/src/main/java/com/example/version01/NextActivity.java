@@ -64,6 +64,7 @@ public class NextActivity extends AppCompatActivity {
         Button btngadget = findViewById(R.id.gadget);
         Button btnsetting = findViewById(R.id.setting);
         Button btnsituation = findViewById(R.id.situation);
+        Button btnalarm = findViewById(R.id.Alarm);
         btnRecord = findViewById(R.id.btnRecord);
 
 
@@ -125,6 +126,12 @@ public class NextActivity extends AppCompatActivity {
             Intent situationIntent = new Intent(NextActivity.this, MySituationActivity.class);
             situationIntent.putExtra("username", username);
             startActivity(situationIntent);
+        });
+        btnalarm.setOnClickListener(v -> {
+            String username = getIntent().getStringExtra("username");
+            Intent SetAlarmActivityIntent = new Intent(NextActivity.this, SetAlarmActivity.class);
+            SetAlarmActivityIntent.putExtra("username", username);
+            startActivity(SetAlarmActivityIntent);
         });
         String username = getIntent().getStringExtra("username");
 

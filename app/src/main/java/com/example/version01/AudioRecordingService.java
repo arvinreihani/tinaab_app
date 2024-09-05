@@ -7,12 +7,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.util.Log;
-import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -76,6 +76,9 @@ public class AudioRecordingService extends Service {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AudioRecordingService::WakeLock");
         wakeLock.acquire();
+
+        // نمایش Toast برای شروع ضبط
+        showToast("Recording started");
 
         return START_NOT_STICKY;
     }
@@ -160,17 +163,24 @@ public class AudioRecordingService extends Service {
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
                 Log.e("AudioRecordingService", "File upload failed: " + e.getMessage());
+                showToast("File upload failed!");
             }
 
             @Override
             public void onResponse(okhttp3.Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
                     Log.d("AudioRecordingService", "File uploaded successfully: " + response.body().string());
+                    showToast("File uploaded successfully!");
                 } else {
                     Log.e("AudioRecordingService", "File upload failed: " + response.message());
+                    showToast("File upload failed!");
                 }
             }
         });
     }
-}
 
+    private void showToast(String message) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show());
+    }
+}

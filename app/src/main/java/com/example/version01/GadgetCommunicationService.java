@@ -11,11 +11,15 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
+import android.os.CountDownTimer;
+
 import androidx.core.app.NotificationCompat;
 import org.json.JSONObject;
 import java.net.DatagramPacket;
@@ -43,12 +47,22 @@ public class GadgetCommunicationService extends Service {
     private JsonUploadService jsonUploadService;
     private boolean isBound = false;
     private String receivedMessage ; // Default to empty JSON
+    private String username ; // Default to empty JSON
     private int spo ; // Default to empty JSON
     private int hrt ; // Default to empty JSON
     private int rr ; // Default to empty JSON
     private int c = 0; // Default to empty JSON
+    private int x = 0; // Default to empty JSON
+    private int y = 0; // Default to empty JSON
+    private int z = 0; // Default to empty JSON
+    private int sum = 0; // Default to empty JSON
+    private int move = 0; // Default to empty JSON
     private String BP ; // Default to empty JSON
     private int[] SPOA = new int[20];
+    private int[] HRTA = new int[20];
+    private int[] TMPA = new int[20];
+    private CountDownTimer countDownTimer;
+    private boolean isRecording = false;
 
 
 
@@ -78,13 +92,13 @@ public class GadgetCommunicationService extends Service {
         setupHandlerForSocketService();
         setupUploadHandler();
         Random random = new Random();
-        rr = random.nextInt((15) - 8 + 1) + 8;
+        rr = random.nextInt((15) - 12 + 1) + 12;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.hasExtra("username")) {
-            String username = intent.getStringExtra("username");
+            username = intent.getStringExtra("username");
             Log.d(TAG, "Received username: " + username);
             startJsonUploadService(username);
         }
@@ -138,6 +152,10 @@ public class GadgetCommunicationService extends Service {
         startSetAlarm();
 
         inputSPOA();
+
+        StartRecord();
+
+        move();
 
     }
 
@@ -205,7 +223,7 @@ public class GadgetCommunicationService extends Service {
         TimerTask sendTask = new TimerTask() {
             @Override
             public void run() {
-                String jsonMessage = createJsonMessage("BP:");
+                String jsonMessage = createJsonMessage("BP:" , 0);
                 sendMessageToGadget(jsonMessage);
             }
         };
@@ -216,7 +234,7 @@ public class GadgetCommunicationService extends Service {
         TimerTask sendTask = new TimerTask() {
             @Override
             public void run() {
-                String jsonMessage = createJsonMessage(" " + BP);
+                String jsonMessage = createJsonMessage(" " + BP, 0 );
                 sendMessageToGadget(jsonMessage);
             }
         };
@@ -231,7 +249,7 @@ public class GadgetCommunicationService extends Service {
                 int min = rr - 3; // حداقل عدد مورد نظر
                 int max = rr + 3; // حداکثر عدد مورد نظر
                 int a = random.nextInt(max - min + 1) + min;
-                String jsonMessage = createJsonMessage("RR: " + a);
+                String jsonMessage = createJsonMessage("RR: " + a, 0 );
                 sendMessageToGadget(jsonMessage);
             }
         };
@@ -245,7 +263,7 @@ public class GadgetCommunicationService extends Service {
                 Calendar calendar = Calendar.getInstance();
                 int hour = calendar.get(Calendar.HOUR_OF_DAY); // ساعت (24 ساعته)
                 int minute = calendar.get(Calendar.MINUTE); // دقیقه
-                String jsonMessage = createJsonMessage(" " + hour + ":" + minute);
+                String jsonMessage = createJsonMessage(" " + hour + ":" + minute, 0 );
                 sendMessageToGadget(jsonMessage);
             }
         };
@@ -256,7 +274,7 @@ public class GadgetCommunicationService extends Service {
         TimerTask sendTask = new TimerTask() {
             @Override
             public void run() {
-                String jsonMessage = createJsonMessage(" tinab");
+                String jsonMessage = createJsonMessage(" tinab" , 0);
                 sendMessageToGadget(jsonMessage);
             }
         };
@@ -267,7 +285,7 @@ public class GadgetCommunicationService extends Service {
         TimerTask sendTask = new TimerTask() {
             @Override
             public void run() {
-                String jsonMessage = createJsonMessage(" tinab");
+                String jsonMessage = createJsonMessage(" tinab" , 0);
                 sendMessageToGadget(jsonMessage);
             }
         };
@@ -279,9 +297,16 @@ public class GadgetCommunicationService extends Service {
             @Override
             public void run() {
                 GadgetData gadgetData = new GadgetData(receivedMessage);
-                if (gadgetData.getFSPO() != null && gadgetData.getSPO() != null) {
+                if (gadgetData.getFSPO() != null && gadgetData.getSPO() != null && gadgetData.getFTMP() != null) {
                     spo = (Integer.valueOf(gadgetData.getFSPO()) + Integer.valueOf(gadgetData.getSPO())) / 2;
+                    hrt = (Integer.valueOf(gadgetData.getFHRT()) + Integer.valueOf(gadgetData.getHRT()) ) / 2;
                     SPOA[c] = spo;
+                    HRTA[c] = Integer.valueOf(gadgetData.getFHRT());
+                    if (gadgetData.getFTMP().equals("")) {
+                        TMPA[c] = 0;
+                    }else {
+                        TMPA[c] = Integer.valueOf(gadgetData.getFTMP());
+                    }
                     c += 1;
                     if (c == 20) {
                         c = 0;
@@ -289,7 +314,24 @@ public class GadgetCommunicationService extends Service {
                 }
             }
         };
-        timer.scheduleAtFixedRate(sendTask, 500, 500);
+        timer.scheduleAtFixedRate(sendTask, 1000, 500);
+    }
+    private void StartRecord() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (calculateAverage() < 92){
+                    String jsonMessage = createJsonMessage(" tinab" , 500);
+                    sendMessageToGadget(jsonMessage);
+                    if (!isRecording && receivedMessage != null){
+                        startRecordingService(username);
+                    }
+
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 11550, 5000);
     }
     private void startcalcbp() {
         timer = new Timer();
@@ -325,12 +367,32 @@ public class GadgetCommunicationService extends Service {
         };
         timer.scheduleAtFixedRate(sendTask, 0, 200);
     }
+    private void move() {
+        timer = new Timer();
+        TimerTask sendTask = new TimerTask() {
+            @Override
+            public void run() {
+                GadgetData gadgetData = new GadgetData(receivedMessage);
+                if (gadgetData.getX() != null ) {
+                    x = Integer.valueOf(gadgetData.getX());
+                    y = Integer.valueOf(gadgetData.getY());
+                    z = Integer.valueOf(gadgetData.getZ());
+                    int sum1 = sum - (x + y + z);
+                    if (sum1 < -6 || sum1 > 6){
+                        move += 1;
+                    }
+                    sum = x + y + z;
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(sendTask, 0, 500);
+    }
     private void startSendingMessages6() {
         timer = new Timer();
         TimerTask sendTask = new TimerTask() {
             @Override
             public void run() {
-                String jsonMessage = createJsonMessage(" tinab");
+                String jsonMessage = createJsonMessage(" tinab" , 0);
                 sendMessageToGadget(jsonMessage);
             }
         };
@@ -343,7 +405,7 @@ public class GadgetCommunicationService extends Service {
         }
     }
 
-    private String createJsonMessage(String S) {
+    private String createJsonMessage(String S, int v) {
         try {
             GadgetData gadgetData = new GadgetData(receivedMessage);
 
@@ -352,15 +414,8 @@ public class GadgetCommunicationService extends Service {
                 hrt = (Integer.valueOf(gadgetData.getFHRT()) + Integer.valueOf(gadgetData.getHRT()) ) / 2;
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("Cl", S);
-                jsonObject.put("Temp", gadgetData.getFTMP());
-                if (hrt > 120) {
-                    jsonObject.put("PR", "120");
-                }
-                else if (hrt < 55) {
-                    jsonObject.put("PR", "55");
-                }else {
-                    jsonObject.put("PR", hrt);
-                }
+                jsonObject.put("Temp", calculateAverage2());
+                jsonObject.put("PR", calculateAverage1() + 7);
 //                if (spo > 100) {
 //                    jsonObject.put("SPO", "100");
 //                }
@@ -370,9 +425,9 @@ public class GadgetCommunicationService extends Service {
 //                    jsonObject.put("SPO", spo);
 //                }
                 jsonObject.put("SPO", calculateAverage());
-                jsonObject.put("M", "4");
+                jsonObject.put("M", move / 2);
                 jsonObject.put("c", "yes");
-                jsonObject.put("v", "0");
+                jsonObject.put("v", v);
                 return jsonObject.toString();
 
 
@@ -513,4 +568,70 @@ public class GadgetCommunicationService extends Service {
         }
         return sum / SPOA.length;
     }
+    public int calculateAverage1() {
+        int sum = 0;
+        for (int i = 0; i < HRTA.length; i++) {
+            sum += HRTA[i];
+        }
+        return sum / HRTA.length;
+    }
+    public int calculateAverage2() {
+        int sum = 0;
+        for (int i = 0; i < TMPA.length; i++) {
+            sum += TMPA[i];
+        }
+        return sum / TMPA.length;
+    }
+    private void startRecordingService(String username) {
+        Intent serviceIntent = new Intent(this, AudioRecordingService.class);
+        serviceIntent.putExtra("username", username);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+
+        isRecording = true;
+
+        // ایجاد یک نخ جدید برای اجرای تایمر
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // آماده‌سازی Looper در نخ پس‌زمینه
+                Looper.prepare();
+
+                // ایجاد Handler در نخ پس‌زمینه
+                Handler backgroundHandler = new Handler(Looper.myLooper());
+
+                // اجرای تایمر در نخ پس‌زمینه
+                backgroundHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        countDownTimer = new CountDownTimer(20000, 1000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                // هر ثانیه تایمر می‌تواند عملکرد خاصی انجام دهد
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                stopRecordingService();
+                            }
+                        }.start();
+                    }
+                });
+
+                // شروع Looper برای پردازش پیام‌ها
+                Looper.loop();
+            }
+        }).start();
+    }
+
+    private void stopRecordingService() {
+        Intent serviceIntent = new Intent(this, AudioRecordingService.class);
+        stopService(serviceIntent);
+        isRecording = false;
+    }
+
 }

@@ -43,41 +43,38 @@
 
     <Button
         android:id="@+id/gadget"
-        android:layout_width="100dp"
+        android:layout_width="75dp"
         android:layout_height="75dp"
         android:text="@string/mygadget"
         android:textAlignment="center"
         android:textSize="12sp"
         android:textStyle="bold"
-        app:icon="@android:drawable/ic_lock_idle_alarm"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/analysis"
+        app:layout_constraintEnd_toStartOf="@+id/Alarm"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <Button
         android:id="@+id/analysis"
-        android:layout_width="100dp"
+        android:layout_width="75dp"
         android:layout_height="75dp"
         android:text="@string/analysis"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:icon="@android:drawable/ic_menu_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/situation"
-        app:layout_constraintStart_toEndOf="@+id/gadget"
+        app:layout_constraintStart_toEndOf="@+id/Alarm"
         app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
     <Button
         android:id="@+id/situation"
-        android:layout_width="100dp"
+        android:layout_width="75dp"
         android:layout_height="75dp"
         android:lineSpacingExtra="8sp"
         android:text="@string/mysituation"
         android:textAlignment="center"
         android:textSize="8sp"
         android:textStyle="bold"
-        app:icon="@drawable/login_user_name_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/analysis"
@@ -94,6 +91,16 @@
         app:layout_constraintBottom_toTopOf="@+id/analysis"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+    <Button
+        android:id="@+id/Alarm"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:text="آلارم"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/analysis"
+        app:layout_constraintStart_toEndOf="@+id/gadget"
         app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
