@@ -34,7 +34,9 @@ public class SetLampActivity extends AppCompatActivity {
     private Button btnBrightnessDown;
     private Button btnSpeedUp;
     private Button btnSpeedDown;
+    private Button btnMode;
     private boolean isOn = false;
+    private boolean moode = false;
     private String brightness; // Initial brightness value
     private int speed = 50; // Initial speed value
 
@@ -54,6 +56,7 @@ public class SetLampActivity extends AppCompatActivity {
         btnBrightnessUp = findViewById(R.id.brightness_up);
         btnBrightnessDown = findViewById(R.id.brightness_down);
         btnSpeedUp = findViewById(R.id.speed_up);
+        btnMode = findViewById(R.id.mode);
         // Set up the "Back" button
         Button btnBack = findViewById(R.id.back);
         Intent intent = getIntent();
@@ -89,17 +92,22 @@ public class SetLampActivity extends AppCompatActivity {
         btnBrightnessUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adjustBrightness(true);
+                adjustBrightnessp(true);
             }
         });
 
         btnBrightnessDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                adjustBrightness(false);
+                adjustBrightnessn(false);
             }
         });
-
+        btnMode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Mode();
+            }
+        });
         btnSpeedUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,13 +194,27 @@ public class SetLampActivity extends AppCompatActivity {
         String url = "http://192.168.62.217/rgb?/save=1";
         sendRequest(url);
     }
-
-    private void adjustBrightness(boolean increase) {
-        brightness += (increase ? "+" : '-');
-        String url = "http://192.168.62.217/rgb?b=" + brightness;
-        sendRequest(url);
+    private void Mode() {
+        if (moode){
+            String url = "http://192.168.62.217/rgb?m=1";
+            sendRequest(url);
+            moode = false;
+        }else {
+            String url = "http://192.168.62.217/rgb?m=4";
+            sendRequest(url);
+            moode = true;
+        }
     }
+    private void adjustBrightnessp(boolean increase) {
+        String url = "http://192.168.62.217/rgb?b=+";
+        sendRequest(url);
 
+    }
+    private void adjustBrightnessn(boolean increase) {
+        String url = "http://192.168.62.217/rgb?b=-";
+        sendRequest(url);
+
+    }
     private void adjustSpeed(boolean increase) {
         speed = (increase ? 1 :-1);
         speed = Math.max(0, Math.min(100, speed)); // Keep within bounds

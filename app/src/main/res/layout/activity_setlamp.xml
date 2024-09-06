@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Brightness -"
-        app:layout_constraintBottom_toTopOf="@+id/speed_up"
+        app:layout_constraintBottom_toTopOf="@+id/mode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/brightness_up" />
@@ -73,7 +73,7 @@
         app:layout_constraintBottom_toTopOf="@+id/seekBarRed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/brightness_down" />
+        app:layout_constraintTop_toBottomOf="@+id/mode" />
 
     <!-- Speed Down Button -->
 
@@ -122,4 +122,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seekBarBlue" />
+
+    <Button
+        android:id="@+id/mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="mode"
+        app:layout_constraintBottom_toTopOf="@+id/speed_up"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/brightness_down" />
 </androidx.constraintlayout.widget.ConstraintLayout>
