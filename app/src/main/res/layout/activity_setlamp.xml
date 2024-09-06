@@ -69,23 +69,13 @@
         android:id="@+id/speed_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Speed +"
-        app:layout_constraintBottom_toTopOf="@+id/speed_down"
+        android:text="set colour"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarRed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/brightness_down" />
 
     <!-- Speed Down Button -->
-    <Button
-        android:id="@+id/speed_down"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="74dp"
-        android:text="Speed -"
-        app:layout_constraintBottom_toTopOf="@+id/seekBarRed"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/speed_up" />
 
     <!-- Red SeekBar -->
 
@@ -99,7 +89,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/speed_down" />
+        app:layout_constraintTop_toBottomOf="@+id/speed_up" />
 
     <SeekBar
         android:id="@+id/seekBarGreen"
