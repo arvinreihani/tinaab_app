@@ -47,7 +47,7 @@ public class JsonUploadService extends Service {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("JSON Upload Service")
                 .setContentText("Service is running")
-                .setSmallIcon(R.drawable.ic_notification) // Replace with your notification icon
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(createPendingIntent()) // Ensure the notification is interactable
                 .build();
         startForeground(1, notification);
@@ -102,7 +102,7 @@ public class JsonUploadService extends Service {
     public void onDestroy() {
         super.onDestroy();
         stopUploadingMessages();
-        Log.d(TAG, "Service Destroyed");
+//        Log.d(TAG, "Service Destroyed");
     }
 
     @Override
@@ -140,7 +140,7 @@ public class JsonUploadService extends Service {
             HttpURLConnection connection = null;
             try {
                 if (jsonMessage == null || jsonMessage.trim().isEmpty()) {
-                    Log.e(TAG, "Received message is null or empty");
+//                    Log.e(TAG, "Received message is null or empty");
                     return;
                 }
 
@@ -148,12 +148,12 @@ public class JsonUploadService extends Service {
                 try {
                     jsonObject = new JSONObject(jsonMessage);
                 } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing JSON: ", e);
+//                    Log.e(TAG, "Error parsing JSON: ", e);
                     return;
                 }
 
                 URL url = new URL(serverUrl);
-                Log.d(TAG, "Uploading to URL: " + url.toString());
+//                Log.d(TAG, "Uploading to URL: " + url.toString());
 
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
@@ -168,16 +168,16 @@ public class JsonUploadService extends Service {
                 }
 
                 int responseCode = connection.getResponseCode();
-                Log.d(TAG, "Response Code: " + responseCode);
+//                Log.d(TAG, "Response Code: " + responseCode);
 
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    Log.d(TAG, "Upload successful to URL: " + url.toString());
+//                    Log.d(TAG, "Upload successful to URL: " + url.toString());
                 } else {
-                    Log.d(TAG, "Server returned: " + responseCode);
+//                    Log.d(TAG, "Server returned: " + responseCode);
                 }
 
             } catch (Exception e) {
-                Log.e(TAG, "Error uploading JSON: ", e);
+//                Log.e(TAG, "Error uploading JSON: ", e);
             } finally {
                 if (connection != null) {
                     connection.disconnect();

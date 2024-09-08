@@ -43,7 +43,7 @@ public class MyForegroundService extends Service {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Recording Service")
                 .setContentText("Recording is running")
-                .setSmallIcon(R.drawable.ic_notification) // Ensure you have this drawable resource
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .build();

@@ -129,7 +129,7 @@ public class GadgetCommunicationService extends Service {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Gadget Communication Service")
                 .setContentText("Service is running")
-                .setSmallIcon(R.drawable.ic_notification) // Replace with your notification icon
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentIntent(createPendingIntent())
                 .build();
         startForeground(1, notification);
@@ -170,10 +170,10 @@ public class GadgetCommunicationService extends Service {
             public void handleMessage(Message msg) {
                 if (msg.what == 1) {
                     receivedMessage = (String) msg.obj;
-                    Log.d(TAG, "Message received from socket: " + receivedMessage);
+//                    Log.d(TAG, "Message received from socket: " + receivedMessage);
                     // Process the received message
                 } else {
-                    Log.e(TAG, "Unexpected message type");
+//                    Log.e(TAG, "Unexpected message type");
                 }
             }
         };
@@ -212,9 +212,9 @@ public class GadgetCommunicationService extends Service {
         if (jsonUploadService != null && jsonUploadService.getHandler() != null) {
             Message message = jsonUploadService.getHandler().obtainMessage(2, receivedMessage);
             jsonUploadService.getHandler().sendMessage(message);
-            Log.d(TAG, "Message sent to JsonUploadService: " + receivedMessage);
+//            Log.d(TAG, "Message sent to JsonUploadService: " + receivedMessage);
         } else {
-            Log.e(TAG, "Unable to send message, service not bound or handler is null");
+//            Log.e(TAG, "Unable to send message, service not bound or handler is null");
         }
     }
 
@@ -360,7 +360,7 @@ public class GadgetCommunicationService extends Service {
                 int minute = calendar.get(Calendar.MINUTE); // دقیقه
                 GadgetData gadgetData = new GadgetData(receivedMessage);
                 if (gadgetData.getK1() != null && gadgetData.getK1().equals("1")) {
-                    Log.e(TAG, "Error creating JSON message" + hour + ":" + minute);
+//                    Log.e(TAG, "Error creating JSON message" + hour + ":" + minute);
 
                 }
             }
@@ -432,7 +432,7 @@ public class GadgetCommunicationService extends Service {
 
 
         } catch (Exception e) {
-            Log.e(TAG, "Error creating JSON message", e);
+//            Log.e(TAG, "Error creating JSON message", e);
             return null; // Return an empty JSON object in case of error
         }
     }
@@ -446,9 +446,9 @@ public class GadgetCommunicationService extends Service {
                 DatagramPacket packet = new DatagramPacket(messageBytes, messageBytes.length, gadgetAddress, GADGET_PORT);
                 socket.send(packet);
                 socket.close();
-                Log.d(TAG, "Message sent to gadget: " + message);
+//                Log.d(TAG, "Message sent to gadget: " + message);
             } catch (Exception e) {
-                Log.e(TAG, "Error sending message to gadget", e);
+//                Log.e(TAG, "Error sending message to gadget", e);
             }
         }).start();
     }
